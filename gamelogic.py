@@ -1,29 +1,28 @@
 import pygame
-from player import tank
+from player import player
+from background import background
 from terrain import terrain
 import random
 
 class scorchedearth:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"],pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["blue"], pygame.color.THECOLORS["grey"],pygame.color.THECOLORS["orange"]]
 
-    #length of turn per player
-    lengthofturn = 15.0
-    # max shots per round per player
-    shotlimit = 1
-    # time to charge full power shot in seconds
-    fullpowershottime = 1.5
+    lengthofturn = 15.0    #length of turn per player
+    shotlimit = 1  # max shots per round per player
+    fullpowershottime = 1.5    # time to charge full power shot in seconds
 
     def __init__(self, screensize, playernames, fullscreen=False):
         #initialize pygame
         pygame.init()
         pygame.font.init()
 
-        #passed parameters assignment
+        #screen
         self.screensize = screensize
         if fullscreen:
             self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode(self.screensize)
+
         self.playernames = playernames
         #set name to Player x if empty
         for i in range(len(self.playernames)):
@@ -35,7 +34,8 @@ class scorchedearth:
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
-        #create player objects
+        #create player objects with random colors
+        random.shuffle(scorchedearth._playercolors)
         self._initPlayers(self.playernames)
 
         #reset all variables
@@ -46,16 +46,18 @@ class scorchedearth:
         return
 
     def restart(self):
-        random.shuffle(scorchedearth._playercolors)
+        #background
+        self.background = background(self.screensize)
 
         #regenerate the terrain
         self.gameTerrain.generateTerrain()
 
+        self.aliveplayers = []
         #respawn players
-        random.shuffle(self.entities[0])
         for i in range(len(self.entities[0])):
-            xpos = (self.gameTerrain.bounds[0] / len(self.entities[0])) * ((i+1)-0.5) + random.randint(int(-(self.gameTerrain.bounds[0] / len(self.entities[0])) * 0.1), int((self.gameTerrain.bounds[0] / len(self.entities[0]))*0.5))
+            xpos = (self.gameTerrain.bounds[0] / len(self.entities[0])) * ((i+1)-0.5) + random.randint(int(-(self.gameTerrain.bounds[0] / len(self.entities[0])) * 0.05), int((self.gameTerrain.bounds[0] / len(self.entities[0]))*0.4))
             self.entities[0][i].respawn(xpos)
+            self.aliveplayers.append(self.entities[0][i])
 
         #delete missiles and particles
         self.entities[1] = []
@@ -84,7 +86,7 @@ class scorchedearth:
     def _initPlayers(self, playernames):
         for i in range(len(playernames)):
             #evenly distribute players over screen
-            tank(playernames[i], self.gameTerrain, self.entities, scorchedearth._playercolors[i])
+            player(playernames[i], self.gameTerrain, self.entities, scorchedearth._playercolors[i % len(self._playercolors)])
 
     def _drawEntities(self, screen, entities, dt):
         for entitylist in entities:
@@ -100,7 +102,7 @@ class scorchedearth:
             for i in entitylist:
                 i.draw(screen)
 
-    def turnlogic(self):
+    def turnlogic(self,dt):
         playersalive = len(self.entities[0])
         for i in self.entities[0]:
             if i.destroyed:
@@ -125,7 +127,7 @@ class scorchedearth:
             return
 
 
-        text = "Time left: " + str(round(abs(self.lengthofturn - self.currentturnlength), 1))
+        text = "Time left: " + str(round(abs(self.lengthofturn - self.currentturnlength), 1)) + "     FPS: " + str(round(1.0/dt, 2))
         textsurface = self.font.render(text, False, self.entities[0][self.currentplayer].color)
         self.screen.blit(textsurface, (50, 50))
 
@@ -208,10 +210,11 @@ class scorchedearth:
                 elif right:
                     self.entities[0][self.currentplayer].move(1.0, dt)
 
+                self.background.draw(self.screen)
                 self.gameTerrain.draw(self.screen)
 
                 self.currentturnlength += dt
-                self.turnlogic()
+                self.turnlogic(dt)
 
                 self._drawEntities(self.screen, self.entities, dt)
                 pygame.display.flip()

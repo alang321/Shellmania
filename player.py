@@ -5,7 +5,7 @@ from Vector import Vector2d
 from particles import particle
 import random
 
-class tank:
+class player:
     #drawing
     body = ((0, 15.0), (2.5, 20.0), (22.5, 20.0), (25, 15), (18.5, 15.0), (15.5, 12.0), (9.5, 12.0), (6.5, 15.0))
     #turret length in pixel
@@ -65,6 +65,8 @@ class tank:
         self.fireorange = fireorange
         #body
         self.sprite = pygame.Surface([self.width, self.height], pygame.SRCALPHA)
+        #text
+        self.textsurface = self.font.render(self.name, False, self.color)
 
         #toggles
         self.drawToggle = True
@@ -134,10 +136,9 @@ class tank:
             screen.blit(rotated, (self.pos[0] - rotated.get_width() / 2.0, self.pos[1] - rotated.get_height() / 2.0))
         #draw text and health bar
         if not self.destroyed:
-            textsurface = self.font.render(self.name, False, self.color)
             pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
             pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
-            screen.blit(textsurface, (self.pos[0]-textsurface.get_rect().w/2, self.pos[1]-50))
+            screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
         return
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
@@ -155,17 +156,20 @@ class tank:
     #shoot a missile in turret vect direction
     def fire(self, shootingpower):
         if self.controlActive:
-            missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.entities, 1.0, self.color)
+            missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.entities, self, 1.0, self.color)
             particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 20.0, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed
-    def hit(self, damage):
+    def hit(self, damage, player):
         if not self.destroyed:
             self.health -= damage
 
             if self.health <= 0.0:
+                self.health = 0.0
                 self.destroyed = True
                 self.controlActive = False
+                if player != self:
+                    player.kills += 1
             return
 
     #return the turret angle limited by bounds

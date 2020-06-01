@@ -5,13 +5,15 @@ import random
 
 class terrain:
     bedrockheight = 10
-    def __init__(self, bounds, groundcolor=pygame.color.THECOLORS["green"], backgroundcolor=pygame.color.THECOLORS["black"]):
+
+    def __init__(self, bounds, groundcolor=pygame.color.THECOLORS["green"]):
         self.bounds = bounds
         self.groundcolor = groundcolor[:-1]
-        self.backgroundcolor = backgroundcolor[:-1]
+        self.backgroundcolor = pygame.color.THECOLORS["black"][:-1]
 
         #create surface that can later be edited with a reference array terrain bitmap
         self.surface = pygame.Surface(self.bounds)
+        self.surface.set_colorkey(self.backgroundcolor)
 
         #height for each x pos
         self.heightmap = [None] * self.bounds[0]
@@ -22,11 +24,12 @@ class terrain:
         return
 
     def generateTerrain(self):
-        #generates a 3d array which references the values for the terrain surface
+        #generates a bool array which dictates where ground and where background is
         self.bitmap = numpy.full((self.bounds[0], self.bounds[1]), False)
 
         rand = []
 
+        #generate x amount of random sin functions that get overlayed over each other to create random hilly terrain
         for i in range(7):
             gain = random.randint(int(self.bounds[1] / 4.5), int(self.bounds[1] / 2.7))
             freq = random.randint(int(self.bounds[0] / 40), int(self.bounds[0] / 8))

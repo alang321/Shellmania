@@ -38,6 +38,7 @@ class Vector2d:
     def copy(self):
         return Vector2d(self.x, self.y)
 
+    #operator definitions
     def __mul__(self, other):
         return Vector2d(self.x * other, self.y * other)
 

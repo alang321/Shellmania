@@ -1,7 +1,6 @@
 import pygame
-import numpy as np
 from Vector import Vector2d
-from explosion2 import explosion2
+from explosion import explosion
 from particles import particle
 
 
@@ -14,7 +13,7 @@ class missile:
     Cd = 0.7
     S = 0.005
 
-    def __init__(self, pos, dir, velocity, terrain, entities, m=1.0, color=pygame.color.THECOLORS["red"]):
+    def __init__(self, pos, dir, velocity, terrain, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
         #vel pos
         self.velocity = velocity * dir
         self.pos = pos
@@ -24,6 +23,8 @@ class missile:
         self.entities = entities
         self.entities[1].append(self)
         self.delete = False
+        #player that fired the missile
+        self.player = player
 
         self.m = m
 
@@ -68,7 +69,7 @@ class missile:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion2(self.pos, self.terrain, self.entities)
+                explosion(self.pos, self.terrain, self.entities, self.player)
                 self.delete = True
         else:
             self.delete = True
