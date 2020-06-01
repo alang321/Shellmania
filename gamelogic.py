@@ -5,7 +5,9 @@ from terrain import terrain
 import random
 
 class scorchedearth:
-    _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["blue"], pygame.color.THECOLORS["grey"],pygame.color.THECOLORS["orange"]]
+    _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["grey"], pygame.color.THECOLORS["orange"]]
+    _groundcolors = [(193, 68, 14, 255), (35, 141, 35, 255), (143, 143, 143, 255)]
+
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
     lengthofturn = 15.0    #length of turn per player
@@ -26,6 +28,9 @@ class scorchedearth:
         else:
             self.screen = pygame.display.set_mode(self.screensize)
 
+        # background
+        self.background = background(self.screensize, (19, 19, 39, 255))
+
         self.playernames = playernames
         #set name to Player x if empty
         for i in range(len(self.playernames)):
@@ -35,6 +40,11 @@ class scorchedearth:
         # players, missiles, particles
         self.entities = [[], [], []]
         self.aliveplayers = []
+
+        #initilize fonts
+        self.font = pygame.font.SysFont('Arial', 20)
+        self.winnersubfont = pygame.font.SysFont('Arial', 25)
+        self.winnerfont = pygame.font.SysFont('Arial', 50)
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
@@ -53,10 +63,9 @@ class scorchedearth:
 
     #sets or reset all parameters to the start of a new round
     def restart(self):
-        #background
-        self.background = background(self.screensize)
 
         #regenerate the terrain
+        self.gameTerrain.groundcolor = random.choice(scorchedearth._groundcolors)[:-1]
         self.gameTerrain.generateTerrain()
 
         #random spawn order
@@ -77,10 +86,6 @@ class scorchedearth:
         self.entities[2].clear()
 
         self.gamestate = self.gamestates["round"]
-
-        #initilize fonts
-        self.font = pygame.font.SysFont('Arial', 20)
-        self.winnerfont = pygame.font.SysFont('Arial', 50)
 
         #timer for how long current turn is
         self.currentturnstart = 0.0
@@ -212,8 +217,23 @@ class scorchedearth:
         else:
             if self.gamestate == self.gamestates["draw"]:
                 text = "Draw"
+                textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
             else:
-                text = "Winner: " + self.aliveplayers[0].name + " (" + str(self.aliveplayers[0].wins) + ")"
+                textsurface = pygame.Surface(self.screensize)
+                textsurface.set_colorkey((0, 0, 0))
 
-            textsurface = self.winnerfont.render(text, False, self.currentplayer.color)
+                text = "Winner: " + self.aliveplayers[0].name
+                textsurface2 = self.winnerfont.render(text, False, self.aliveplayers[0].color)
+                textsurface.blit(textsurface2, (textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
+
+                pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
+
+                text = "Wins: " + str(self.aliveplayers[0].wins)
+                textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
+                textsurface.blit(textsurface3, (textsurface.get_rect().w / 2 - textsurface3.get_rect().w / 2, (textsurface.get_rect().h / 2)-28))
+
+                text = "Kills: " + str(self.aliveplayers[0].kills)
+                textsurface4 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
+                textsurface.blit(textsurface4, (textsurface.get_rect().w / 2 - textsurface4.get_rect().w / 2, (textsurface.get_rect().h / 2)+7))
+
             screen.blit(textsurface, (self.screensize[0] / 2 - textsurface.get_rect().w / 2, self.screensize[1] / 2 - textsurface.get_rect().h / 2))

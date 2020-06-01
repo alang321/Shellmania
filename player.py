@@ -175,7 +175,7 @@ class player:
             if eventtype == pygame.KEYDOWN:
                 self.shotcharging = True
                 self.shootingstarttime = elapsedtime
-            elif eventtype == pygame.KEYUP:
+            elif eventtype == pygame.KEYUP and self.shotcharging:
                 self.shotcharging = False
                 self.fire(min(max((elapsedtime - self.shootingstarttime) / self.fullpowershottime, self.minshotpower), 1.0))
         else:
