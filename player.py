@@ -165,7 +165,7 @@ class player:
             newx = self.pos[0] + dirvector.x * dt * self.speed
 
             #checks if newpos is in bounds and if height difference exceeds maximum
-            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
+            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 20:
                 self.pos[0] = newx
         else:
             self.movedir = 0.0
