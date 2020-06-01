@@ -1,6 +1,6 @@
 import pygame
 import numpy
-from Vector import Vect
+from Vector import Vector2d
 import random
 
 class terrain:
@@ -10,25 +10,27 @@ class terrain:
         self.groundcolor = groundcolor[:-1]
         self.backgroundcolor = backgroundcolor[:-1]
 
-        #create surface that can later be dynamically edited with a reference array terrain bitmap
+        #create surface that can later be edited with a reference array terrain bitmap
         self.surface = pygame.Surface(self.bounds)
-        self.bitmap = self._generateTerrain()
 
+        #height for each x pos
         self.heightmap = [None] * self.bounds[0]
+        #normal vcector for each xpos
         self.normalmap = [None] * self.bounds[0]
-        self.updateSurface(range(0, bounds[0]))
+        #true false bitmap
+        self.bitmap = None
         return
 
-    def _generateTerrain(self):
+    def generateTerrain(self):
         #generates a 3d array which references the values for the terrain surface
-        bitmap = numpy.full((self.bounds[0], self.bounds[1]), False)
+        self.bitmap = numpy.full((self.bounds[0], self.bounds[1]), False)
 
         rand = []
 
         for i in range(7):
             gain = random.randint(int(self.bounds[1] / 4.5), int(self.bounds[1] / 2.7))
-            freq = random.randint(int(self.bounds[1] / 30), int(self.bounds[1] / 8))
-            phaseshift = random.randint(0, self.bounds[1] / 2)
+            freq = random.randint(int(self.bounds[0] / 40), int(self.bounds[0] / 8))
+            phaseshift = random.randint(0, self.bounds[0] / 2)
             rand.append([gain, freq, phaseshift])
 
 
@@ -40,11 +42,11 @@ class terrain:
 
             for j in range(0, self.bounds[1]):
                 if (self.bounds[1] - height) < j:
-                    bitmap[i, j] = True
+                    self.bitmap[i, j] = True
                 else:
-                    bitmap[i, j] = False
+                    self.bitmap[i, j] = False
 
-        return bitmap
+        self.updateSurface(range(0, self.bounds[0]))
 
     def updateHeightmap(self, rangex):
         for i in rangex:
@@ -57,13 +59,9 @@ class terrain:
     def updateNormalmap(self, rangex):
         distance = 7
         for i in rangex:
-
             origin = [max(float(i - distance), 0.0), float(self.heightmap[max(i - distance, 0)])]
             target = [float(min(i + distance, self.bounds[0]-1)), float(self.heightmap[min(i + distance, self.bounds[0] - 1)])]
-            vec = [target[0] - origin[0], target[1] - origin[1]]
-            unit = vec/numpy.linalg.norm(vec)
-            normal = [unit[1], -unit[0]]
-            self.normalmap[i] = Vect(normal[0], normal[1])
+            self.normalmap[i] = Vector2d.getvectorfrompoints(origin, target).getuvec().getnormalvec()
         return
 
     #update part of the terrain surface to reflect changes in bitmap

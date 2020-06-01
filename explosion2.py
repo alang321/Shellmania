@@ -1,6 +1,7 @@
 import numpy as np
 import pygame
 import pygame.gfxdraw
+from Vector import Vector2d
 from particles import particle
 
 
@@ -25,7 +26,7 @@ class explosion2:
         surface.set_colorkey((0, 0, 0))
         pygame.gfxdraw.filled_circle(surface, int(surface.get_rect().w/2), int(surface.get_rect().h/2), int(self.blastradius+2), pygame.color.THECOLORS["orange"])
         #surface.fill(pygame.color.THECOLORS["red"])
-        particle(pos, surface, 2, [0.0, 0.0], 0.0, 0.0, entities[2], True)
+        particle(pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, entities[2], True)
 
         self._playerhits()
         self._destroyterrain()
@@ -73,7 +74,8 @@ class explosion2:
     def _move(self, bitmap, deleterange):
         length = deleterange[0] - deleterange[1]
 
-        bitmap[deleterange[1]:deleterange[0]] = False
+        for i in range(deleterange[1], deleterange[0]):
+            bitmap[i] = False
 
         for i in range(deleterange[0], self.terrain.bounds[1]-1):
             if bitmap[i]:

@@ -1,46 +1,50 @@
-import pygame
-
 class particle:
-    def __init__(self, pos, surface, duration, dir, velocity, slowdown, particles, fadeout=True, scale=1.0):
+    def __init__(self, pos, surface, duration, dir, velocity, slowdown, particles, fadeout=True):
+        #entitiy list
+        particles.append(self)
         self.delete = False
+
+        # pos vel, vel is a vector2d
         self.pos = pos
-        self.velocity = [dir[0] * velocity, dir[1] * velocity]
+        self.velocity = velocity * dir
 
+        #if particle shouild fade out linearly
         self.fadeout = fadeout
-
-        self.surface = surface
-        self.rect = self.surface.get_rect()
-
-        self.scale = scale
-
+        #how long the partile lives
         self.duration = float(duration)
-
-        self.timer = 0.0
-
         #loose this percentage of velocity each second
         self.slowdown = slowdown
 
-        particles.append(self)
+        #time to lkeep track of how long particle has been alive
+        self.timer = 0.0
 
+        #surface
+        self.surface = surface
+        self.rect = self.surface.get_rect()
+
+#draw the particle
     def draw(self, screen):
         screen.blit(self.surface, (self.pos[0] - self.surface.get_rect().w/2, self.pos[1] - self.surface.get_rect().h/2))
 
-
+#update the particle
     def update(self, dt):
         self.timer += dt
 
+        # if particle hasnt exceeded its predesignated life duration
         if self.timer < self.duration:
+            #percentage of the total particel life
             percentage = (self.timer/self.duration)
+
+            #change pos
             for i in range(2):
                 self.pos[i] += self.velocity[i] * dt
 
+            # if fadeout set opacity linearly from 100%-0% from start to end
             if self.fadeout:
                 self.surface.set_alpha(255 - 255 * percentage)
 
-
-
-            #self.surface = pygame.transform.scale(self.surface, (int(self.rect.w + self.rect.w * (self.scale-1) * percentage), int(self.rect.h + self.rect.h * (self.scale-1) * percentage)))
-
-            self.velocity = [i - i * self.slowdown * dt for i in self.velocity]
+            #adjust velocity
+            for i in range(len(self.velocity)):
+                self.velocity[i] *= 1.0 - self.slowdown * dt
         else:
             self.delete = True

@@ -4,61 +4,87 @@ from terrain import terrain
 import random
 
 class scorchedearth:
-
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"],pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["blue"], pygame.color.THECOLORS["grey"],pygame.color.THECOLORS["orange"]]
 
+    #length of turn per player
+    lengthofturn = 15.0
+    # max shots per round per player
+    shotlimit = 1
+    # time to charge full power shot in seconds
+    fullpowershottime = 1.5
+
     def __init__(self, screensize, playernames, fullscreen=False):
-        self.screensize = screensize
-        self.playernames = playernames
-
-
+        #initialize pygame
         pygame.init()
         pygame.font.init()
 
-
+        #passed parameters assignment
+        self.screensize = screensize
         if fullscreen:
             self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode(self.screensize)
+        self.playernames = playernames
+        #set name to Player x if empty
+        for i in range(len(self.playernames)):
+            if self.playernames[i] == "":
+                self.playernames[i] = "Player " + str(i+1)
 
+        # players, missiles, particles
+        self.entities = [[], [], []]
+
+        #create terrain object
+        self.gameTerrain = terrain(self.screensize)
+        #create player objects
+        self._initPlayers(self.playernames)
+
+        #reset all variables
         self.restart()
+
+        #start the game
         self.start()
         return
 
     def restart(self):
-        tank._counter = 0
         random.shuffle(scorchedearth._playercolors)
 
-        self.gameended = False
-        self.gameTerrain = terrain(self.screensize)
-        # players, missiles, particles
-        self.entities = [[], [], []]
-        self._initPlayers(self.playernames, self.screensize)
+        #regenerate the terrain
+        self.gameTerrain.generateTerrain()
 
+        #respawn players
+        random.shuffle(self.entities[0])
+        for i in range(len(self.entities[0])):
+            xpos = (self.gameTerrain.bounds[0] / len(self.entities[0])) * ((i+1)-0.5) + random.randint(int(-(self.gameTerrain.bounds[0] / len(self.entities[0])) * 0.1), int((self.gameTerrain.bounds[0] / len(self.entities[0]))*0.5))
+            self.entities[0][i].respawn(xpos)
+
+        #delete missiles and particles
+        self.entities[1] = []
+        self.entities[2] = []
+
+        self.gameended = False
+
+        #initilize fonts
         self.font = pygame.font.SysFont('Arial', 20)
         self.winnerfont = pygame.font.SysFont('Arial', 50)
 
-        self.lengthofturn = 15.0
-        self.currentturnlength = 0.0
-        #variable to keep track of how many shots a player fired
+        #variable to keep track of how many shots a player fired in the current turn
         self.shotcounter = 0
-        #max shots per round per player
-        self.shotlimit = 1
-        #time to charge full power shot in seconds
-        self.fullpowershottime = 1.5
-
-        self.currentplayer = random.randint(0, len(self.playernames)-1)
-        self.entities[0][self.currentplayer].controlActive = True
-
+        #if shot is charing shootingtimer starts to see how long shot buttin is pressed
         self.shotcharging = False
         self.shootingtimer = 0.0
 
+        #timer for how long current turn is
+        self.currentturnlength = 0.0
+
+        #random player starts
+        self.currentplayer = random.randint(0, len(self.playernames)-1)
+        self.entities[0][self.currentplayer].controlActive = True
+
     #add tank objects to player array
-    def _initPlayers(self, playernames, screensize):
+    def _initPlayers(self, playernames):
         for i in range(len(playernames)):
             #evenly distribute players over screen
-            xpos = (screensize[0] / len(playernames)) * ((i+1)-0.5) + random.randint(int(-(screensize[0] / len(playernames)) * 0.1), int((screensize[0] / len(playernames))*0.5))
-            tank(playernames[i], xpos, self.gameTerrain, self.entities, scorchedearth._playercolors[i])
+            tank(playernames[i], self.gameTerrain, self.entities, scorchedearth._playercolors[i])
 
     def _drawEntities(self, screen, entities, dt):
         for entitylist in entities:
@@ -88,6 +114,7 @@ class scorchedearth:
                         self.currentplayer = 0
                         continue
                     self.currentplayer += 1
+                self.entities[0][self.currentplayer].wins += 1
                 text = "Winner: " + self.entities[0][self.currentplayer].name
                 textsurface = self.winnerfont.render(text, False, self.entities[0][self.currentplayer].color)
                 self.screen.blit(textsurface, (self.screensize[0]/2 - textsurface.get_rect().w/2, self.screensize[1]/2 - textsurface.get_rect().h/2))

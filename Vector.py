@@ -1,17 +1,63 @@
 import math
+import numpy as np
 
+class Vector2d:
 
-class Vect:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def findCCWAngle(self, other):
-        return math.degrees(math.asin((self.x * other.y - self.y * other.x)/(self.length()*other.length())))
+    # create addNumbers static method
+    @staticmethod
+    def getvectorfrompoints(origin, target):
+        return Vector2d(target[0] - origin[0], target[1] - origin[1])
+
+    # angle from 0 to 2pi between two vectors
+    def find360CCWAngle(self, vec2):
+        angles = np.arctan2((self.x, vec2.x), (self.y, vec2.y))
+        angle = angles[0] - angles[1]
+        if angle < 0:
+            angle = 2.0 * np.pi + angle
+        return angle
+
+    #return new vecto rotated by angle vec over angle in radians
+    def getrotatedvect(self, angle):
+        c, s = np.cos(angle), np.sin(angle)
+        return Vector2d(self.x*c-self.y*s, self.x*s+self.y*c)
 
     def length(self):
         return (self.x**2 + self.y**2)**0.5
 
-    def transform2uvec(self):
-        self.x /= self.length()
-        self.y /= self.length()
+    def getuvec(self):
+        length = self.length()
+        return Vector2d(self.x/length, self.y/length)
+
+    def getnormalvec(self):
+        return Vector2d(self.y, -self.x)
+
+    def copy(self):
+        return Vector2d(self.x, self.y)
+
+    def __mul__(self, other):
+        return Vector2d(self.x * other, self.y * other)
+
+    def __rmul__(self, other):
+        return Vector2d(self.x * other, self.y * other)
+
+    def __add__(self, other):
+        return Vector2d(self.x + other.x, self.y + other.y)
+
+    def __getitem__(self, key):
+        if key == 0:
+            return self.x
+        if key == 1:
+            return self.y
+
+    def __setitem__(self, key, value):
+        if key == 0:
+            self.x = value
+        if key == 1:
+            self.y = value
+
+    def __len__(self):
+        return 2
