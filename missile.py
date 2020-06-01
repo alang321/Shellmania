@@ -63,7 +63,7 @@ class missile:
         #update position and velocity depeneing on the timestep
         for i in range(2):
             self.velocity[i] += (sum([j[i] for j in forces]) / self.m) * dt
-            self.pos[i] += 30 * self.velocity[i] * dt
+            self.pos[i] += 20 * self.velocity[i] * dt
 
         #if new pos is outside bounds delete
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:

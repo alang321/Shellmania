@@ -23,31 +23,40 @@ class player:
 
     smokeinterval = 0.1
 
-    def __init__(self, name, terrain, entities, color=pygame.color.THECOLORS["red"]):
-        #add self to entitiy playerr list
+    def __init__(self, name, terrain, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):
+        #references
         self.entities = entities
         self.entities[0].append(self)
+        self.terrain = terrain
+        self.aliveplayers = aliveplayers
 
         self.color = color
-        self.terrain = terrain
         self.name = name
         #helath from 0 to 1
         self.health = 1.0
 
         #counters
+        self.shotcounter = 0
         self.kills = 0
         self.wins = 0
+
+        #shooting
+        self.shootingstarttime = 0.0
+        self.minshotpower = 0.1
+        self.shotcharging = False
+        self.fullpowershottime = 1.5  # time to charge full power shot in seconds
 
         # player name font
         self.font = pygame.font.SysFont('Arial', 10)
 
         #turret
-        self.turretVector = Vector2d(0.0, -1.0)
+        self.turretVector = Vector2d(random.randint(-5.0, 5.0), -5.0).getuvec()
         self.turretEndpoint = []
         self.turretOrigin = []
 
         # speed in pixels per second
         self.speed = 50.0
+        self.movedir = 0.0
 
         #surfaces
         #smoke surface
@@ -81,7 +90,10 @@ class player:
         self.kills = 0
         self.health = 1.0
         self.controlActive = False
+        self.movedir = 0.0
+        self.shotcharging = False
         self.destroyed = False
+        self.shotcounter = 0
 
     def _setonground(self):
         #get height at x loaction from terrain
@@ -108,6 +120,9 @@ class player:
                 smoke.set_colorkey((0, 0, 0))
                 smoke.blit(self.smoke, (0, 0))
                 particle(self.pos.copy(), smoke, random.randint(2, 5), dir, 35.0, 0.19, self.entities[2], True)
+
+        #move in the direction of movedir,if movedir is 0 dont move
+        self.move(dt)
 
         #calcualte turrent origin and endpoint
         self.turretOrigin = [self.pos[0] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].x, self.pos[1] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].y]
@@ -142,32 +157,48 @@ class player:
         return
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
-    def move(self, dir, dt):
-        if self.controlActive:
+    def move(self, dt):
+        if self.controlActive and dir != 0:
             #movement direction vector, normal vector to the surface normal
-            dirvector = -dir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
+            dirvector = -self.movedir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
 
             newx = self.pos[0] + dirvector.x * dt * self.speed
 
             #checks if newpos is in bounds and if height difference exceeds maximum
-            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+dir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+dir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
+            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+-self.movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
                 self.pos[0] = newx
+        else:
+            self.movedir = 0.0
+
+    def firekeyevent(self, eventtype, elapsedtime):
+        if self.controlActive:
+            if eventtype == pygame.KEYDOWN:
+                self.shotcharging = True
+                self.shootingstarttime = elapsedtime
+            elif eventtype == pygame.KEYUP:
+                self.shotcharging = False
+                self.fire(min(max((elapsedtime - self.shootingstarttime) / self.fullpowershottime, self.minshotpower), 1.0))
+        else:
+            self.shotcharging = False
 
     #shoot a missile in turret vect direction
     def fire(self, shootingpower):
         if self.controlActive:
+            self.shotcounter += 1
             missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.entities, self, 1.0, self.color)
-            particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 20.0, 1.0, self.entities[2], True)
+            particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 30.0, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed
     def hit(self, damage, player):
         if not self.destroyed:
             self.health -= damage
 
+            #if health <0 player is destroyed
             if self.health <= 0.0:
                 self.health = 0.0
                 self.destroyed = True
                 self.controlActive = False
+                self.aliveplayers.remove(self)
                 if player != self:
                     player.kills += 1
             return

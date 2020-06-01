@@ -5,11 +5,14 @@ from terrain import terrain
 import random
 
 class scorchedearth:
-    _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"],pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["blue"], pygame.color.THECOLORS["grey"],pygame.color.THECOLORS["orange"]]
+    _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["blue"], pygame.color.THECOLORS["grey"],pygame.color.THECOLORS["orange"]]
+    gamestates = {"round": 0, "draw": 1, "win": 2}
 
     lengthofturn = 15.0    #length of turn per player
     shotlimit = 1  # max shots per round per player
-    fullpowershottime = 1.5    # time to charge full power shot in seconds
+
+    quitbutton = pygame.K_ESCAPE # quit button
+    continuebutton = pygame.K_RETURN # continue button
 
     def __init__(self, screensize, playernames, fullscreen=False):
         #initialize pygame
@@ -31,20 +34,24 @@ class scorchedearth:
 
         # players, missiles, particles
         self.entities = [[], [], []]
+        self.aliveplayers = []
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
+
         #create player objects with random colors
         random.shuffle(scorchedearth._playercolors)
-        self._initPlayers(self.playernames)
+        for i in range(len(playernames)):
+            player(playernames[i], self.gameTerrain, self.entities, self.aliveplayers, scorchedearth._playercolors[i % len(self._playercolors)])
 
         #reset all variables
         self.restart()
 
-        #start the game
-        self.start()
+        #start the gameloop
+        self.startgameloop()
         return
 
+    #sets or reset all parameters to the start of a new round
     def restart(self):
         #background
         self.background = background(self.screensize)
@@ -52,41 +59,128 @@ class scorchedearth:
         #regenerate the terrain
         self.gameTerrain.generateTerrain()
 
-        self.aliveplayers = []
+        #random spawn order
+        random.shuffle(self.entities[0])
+
+        self.aliveplayers.clear()
         #respawn players
         for i in range(len(self.entities[0])):
             xpos = (self.gameTerrain.bounds[0] / len(self.entities[0])) * ((i+1)-0.5) + random.randint(int(-(self.gameTerrain.bounds[0] / len(self.entities[0])) * 0.05), int((self.gameTerrain.bounds[0] / len(self.entities[0]))*0.4))
             self.entities[0][i].respawn(xpos)
             self.aliveplayers.append(self.entities[0][i])
 
-        #delete missiles and particles
-        self.entities[1] = []
-        self.entities[2] = []
+        #random control order
+        random.shuffle(self.aliveplayers)
 
-        self.gameended = False
+        #delete missiles and particles
+        self.entities[1].clear()
+        self.entities[2].clear()
+
+        self.gamestate = self.gamestates["round"]
 
         #initilize fonts
         self.font = pygame.font.SysFont('Arial', 20)
         self.winnerfont = pygame.font.SysFont('Arial', 50)
 
-        #variable to keep track of how many shots a player fired in the current turn
-        self.shotcounter = 0
-        #if shot is charing shootingtimer starts to see how long shot buttin is pressed
-        self.shotcharging = False
-        self.shootingtimer = 0.0
-
         #timer for how long current turn is
-        self.currentturnlength = 0.0
+        self.currentturnstart = 0.0
 
         #random player starts
-        self.currentplayer = random.randint(0, len(self.playernames)-1)
-        self.entities[0][self.currentplayer].controlActive = True
+        self.currentindex = random.randint(0, len(self.playernames)-1)
+        self.currentplayer = self.aliveplayers[self.currentindex]
+        self.currentplayer.controlActive = True
 
-    #add tank objects to player array
-    def _initPlayers(self, playernames):
-        for i in range(len(playernames)):
-            #evenly distribute players over screen
-            player(playernames[i], self.gameTerrain, self.entities, scorchedearth._playercolors[i % len(self._playercolors)])
+    #game loop function
+    def startgameloop(self):
+        t0 = 0.001 * pygame.time.get_ticks()
+        maxdt = 0.5
+
+        running = True
+
+        while running:
+            self.elapsedtime = 0.001 * pygame.time.get_ticks()
+            dt = min(self.elapsedtime - t0, maxdt)
+            if dt > 0.:
+                t0 = self.elapsedtime
+
+                # event handling
+                running = self._eventhandling(pygame.event.get())
+
+                #update turn and win loose stuff
+                self._turnlogic()
+
+                #draw
+                self.background.draw(self.screen)
+                self.gameTerrain.draw(self.screen)
+                self._drawEntities(self.screen, self.entities, dt)
+                self._drawText(self.screen)
+
+                #display screen surface
+                pygame.display.flip()
+        pygame.quit()
+
+    #event handling
+    def _eventhandling(self, eventlist):
+        for event in eventlist:
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN and event.key == self.quitbutton:
+                return False
+            elif event.type == pygame.KEYDOWN and event.key == self.continuebutton:
+                if self.gamestate != self.gamestates["round"]:
+                    self.restart()
+            elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.currentplayer.key_fire: # start shot
+                if self.currentplayer.shotcounter < self.shotlimit:
+                    self.currentplayer.firekeyevent(event.type, self.elapsedtime)
+            elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_left:
+                self.currentplayer.movedir = -1.0
+            elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_right:
+                self.currentplayer.movedir = 1.0
+            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_left:
+                self.currentplayer.movedir = 0.0
+            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_right:
+                self.currentplayer.movedir = 0.0
+            pass
+        return True
+
+    def _turnlogic(self):
+        if self.gamestate != self.gamestates["round"]: # if gamestate win or draw return
+            return
+
+        elif len(self.aliveplayers) <= 1: #switch gamestate and add win if playersalive is less or equal than 1
+            if len(self.aliveplayers) == 1:
+                self.gamestate = self.gamestates["win"]
+                self.aliveplayers[0].controlActive = False
+                self.aliveplayers[0].wins += 1
+            if len(self.aliveplayers) == 0:
+                self.gamestate = self.gamestates["draw"]
+
+        elif self.currentplayer.destroyed: #switch to next alive player if current is destroyed
+            newindex = (self.currentindex) % len(self.aliveplayers)
+            if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
+                self.currentindex = newindex
+
+        elif self.lengthofturn < (self.elapsedtime - self.currentturnstart) or self.currentplayer.shotcounter >= self.shotlimit: # if turnlength or shotlimit is exceeded switch player
+            self.currentplayer.controlActive = False
+            newindex = (self.currentindex + 1) % len(self.aliveplayers)
+            if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
+                self.currentindex = newindex
+
+    def _switchplayer(self, oldplayer, newplayer):
+        #only switch if htere are no more missiles flying
+        if len(self.entities[1]) == 0:
+            #oldplayer deativate control
+            oldplayer.shotcharging = False
+            oldplayer.controlActive = False
+            oldplayer.shotcounter = 0
+            oldplayer.movedir = 0.0
+            #newplayer activate control
+            self.currentplayer = newplayer
+            newplayer.controlActive = True
+            self.currentturnstart = self.elapsedtime
+            return True
+        else:
+            return False
 
     def _drawEntities(self, screen, entities, dt):
         for entitylist in entities:
@@ -102,122 +196,24 @@ class scorchedearth:
             for i in entitylist:
                 i.draw(screen)
 
-    def turnlogic(self,dt):
-        playersalive = len(self.entities[0])
-        for i in self.entities[0]:
-            if i.destroyed:
-                playersalive -= 1
+    def _drawText(self, screen):
+        if self.gamestate == self.gamestates["round"]:
+            text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1))
+            textsurface = self.font.render(text, False, self.currentplayer.color)
+            screen.blit(textsurface, (50, 50))
 
-        if playersalive <= 1:
-            self.gameended = True
-            if playersalive == 1:
-                while self.entities[0][self.currentplayer].destroyed:
-                    if self.currentplayer >= len(self.entities[0]) - 1:
-                        self.currentplayer = 0
-                        continue
-                    self.currentplayer += 1
-                self.entities[0][self.currentplayer].wins += 1
-                text = "Winner: " + self.entities[0][self.currentplayer].name
-                textsurface = self.winnerfont.render(text, False, self.entities[0][self.currentplayer].color)
-                self.screen.blit(textsurface, (self.screensize[0]/2 - textsurface.get_rect().w/2, self.screensize[1]/2 - textsurface.get_rect().h/2))
+            if self.currentplayer.shotcharging:
+                time = self.elapsedtime - self.currentplayer.shootingstarttime
             else:
-                text = "Draw"
-                textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
-                self.screen.blit(textsurface, (self.screensize[0]/2 - textsurface.get_rect().w/2, self.screensize[1]/2 - textsurface.get_rect().h/2))
+                time = 0.0
+
+            pygame.draw.rect(screen, self.currentplayer.color, ((0, 0), (self.screensize[0] * min(max(time/self.currentplayer.fullpowershottime, self.currentplayer.minshotpower), 1.0), 5)))
             return
+        else:
+            if self.gamestate == self.gamestates["draw"]:
+                text = "Draw"
+            else:
+                text = "Winner: " + self.aliveplayers[0].name + " (" + str(self.aliveplayers[0].wins) + ")"
 
-
-        text = "Time left: " + str(round(abs(self.lengthofturn - self.currentturnlength), 1)) + "     FPS: " + str(round(1.0/dt, 2))
-        textsurface = self.font.render(text, False, self.entities[0][self.currentplayer].color)
-        self.screen.blit(textsurface, (50, 50))
-
-
-        pygame.draw.rect(self.screen, self.entities[0][self.currentplayer].color, ((0, 0), (self.screensize[0] * min(max(self.shootingtimer/self.fullpowershottime, 0.1), 1.0), 5)))
-
-        if self.shotcounter >= self.shotlimit:
-            self.entities[0][self.currentplayer].controlActive = False
-            self.currentturnlength = self.lengthofturn
-            if len(self.entities[1]) > 0:
-                return
-            self.shotcounter = 0
-
-        if self.currentturnlength > self.lengthofturn or self.entities[0][self.currentplayer].destroyed:
-            self.shotcharging = False
-            self.shootingtimer = 0.0
-            self.entities[0][self.currentplayer].controlActive = False
-            self.currentplayer += 1
-
-            if self.currentplayer >= len(self.entities[0]):
-                self.currentplayer = 0
-
-            while self.entities[0][self.currentplayer].destroyed:
-                if self.currentplayer >= len(self.entities[0])-1:
-                    self.currentplayer = 0
-                    continue
-                self.currentplayer += 1
-
-            self.entities[0][self.currentplayer].controlActive = True
-            self.currentturnlength = 0.0
-            self.shotcounter = 0
-
-    def start(self):
-        t0 = 0.001 * pygame.time.get_ticks()
-        maxdt = 0.5
-
-        running = True
-        left = False
-        right = False
-
-        while running:
-            t = 0.001 * pygame.time.get_ticks()
-            dt = min(t - t0, maxdt)
-            if dt > 0.:
-                t0 = t
-                # event handling
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        running = False
-                    elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                        if self.gameended:
-                            self.restart()
-                    elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                        running = False
-                    elif event.type == pygame.KEYDOWN and event.key == self.entities[0][self.currentplayer].key_fire:
-                        if self.shotcounter < self.shotlimit:
-                            self.shotcharging = True
-                    elif event.type == pygame.KEYUP and event.key == self.entities[0][self.currentplayer].key_fire:
-                        if self.shotcharging:
-                            self.shotcharging = False
-                            if self.shotcounter < self.shotlimit:
-                                self.shotcounter += 1
-                                self.entities[0][self.currentplayer].fire(min(max(self.shootingtimer/self.fullpowershottime, 0.1), 1.0))
-                                self.shootingtimer = 0.0
-                    elif event.type == pygame.KEYDOWN and event.key == self.entities[0][self.currentplayer].key_left:
-                        left = True
-                    elif event.type == pygame.KEYDOWN and event.key == self.entities[0][self.currentplayer].key_right:
-                        right = True
-                    elif event.type == pygame.KEYUP and event.key == self.entities[0][self.currentplayer].key_left:
-                        left = False
-                    elif event.type == pygame.KEYUP and event.key == self.entities[0][self.currentplayer].key_right:
-                        right = False
-                    pass
-
-                if self.shotcharging:
-                    self.shootingtimer += dt
-
-                if left:
-                    self.entities[0][self.currentplayer].move(-1.0, dt)
-                elif right:
-                    self.entities[0][self.currentplayer].move(1.0, dt)
-
-                self.background.draw(self.screen)
-                self.gameTerrain.draw(self.screen)
-
-                self.currentturnlength += dt
-                self.turnlogic(dt)
-
-                self._drawEntities(self.screen, self.entities, dt)
-                pygame.display.flip()
-        pygame.quit()
-
-
+            textsurface = self.winnerfont.render(text, False, self.currentplayer.color)
+            screen.blit(textsurface, (self.screensize[0] / 2 - textsurface.get_rect().w / 2, self.screensize[1] / 2 - textsurface.get_rect().h / 2))

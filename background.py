@@ -19,6 +19,8 @@ class background:
 
         #generate n number of stars with random locations
         self.generateStars(star, int((self.screensize[0] * self.screensize[1])/2600.0))
+
+        star.convert()
         return
 
     def generateStars(self, star, n):
