@@ -228,9 +228,9 @@ class scorchedearth:
             screen.blit(textsurface, (self.screensize[0]-50-textsurface.get_rect().w, 50))
 
             if self.wind.force.x < 0:
-                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-10, 50+3), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+17), (self.screensize[0]-50-textsurface.get_rect().w-25, 50+20/2)))
+                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-10, 50+5), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+15), (self.screensize[0]-50-textsurface.get_rect().w-20, 50+20/2)))
             elif self.wind.force.x > 0:
-                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-25, 50+3), (self.screensize[0]-50-textsurface.get_rect().w-25, 50+17), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+20/2)))
+                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-20, 50+5), (self.screensize[0]-50-textsurface.get_rect().w-20, 50+15), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+20/2)))
 
             #draw shotcharging bar
             if self.currentplayer.shotcharging:

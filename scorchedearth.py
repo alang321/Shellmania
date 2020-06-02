@@ -12,4 +12,4 @@ a = int(input("Number players:"))
 for i in range(0, a):
     playernames.append(input("Enter player name:"))
 
-game = scorchedearth(screenSize, playernames, True)
+game = scorchedearth(screenSize, playernames, False)

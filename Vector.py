@@ -1,5 +1,5 @@
-import math
 import numpy as np
+import inspect
 
 class Vector2d:
 
@@ -25,8 +25,18 @@ class Vector2d:
         c, s = np.cos(angle), np.sin(angle)
         return Vector2d(self.x*c-self.y*s, self.x*s+self.y*c)
 
+    #get the reflection of a vector over a normal vector
+    def getreflectionvect(self, normal):
+        temp = 2.0 * self.dotprod(self, normal)
+        tempvec = Vector2d(temp * normal.x, temp * normal.y)
+        return Vector2d(self.x - tempvec.x, self.y - tempvec.y)
+
     def length(self):
         return (self.x**2 + self.y**2)**0.5
+
+    @staticmethod
+    def dotprod(vec1, vec2):
+        return vec1.x * vec2.x + vec1.y * vec2.y
 
     def getuvec(self):
         length = self.length()
@@ -48,11 +58,15 @@ class Vector2d:
     def __add__(self, other):
         return Vector2d(self.x + other.x, self.y + other.y)
 
+    def __sub__(self, other):
+        return Vector2d(self.x - other.x, self.y - other.y)
+
     def __getitem__(self, key):
         if key == 0:
             return self.x
         if key == 1:
             return self.y
+        return
 
     def __setitem__(self, key, value):
         if key == 0:

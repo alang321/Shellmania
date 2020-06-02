@@ -30,7 +30,7 @@ class explosion:
         surface.fill((0, 0, 0))
         surface.set_colorkey((0, 0, 0))
         pygame.gfxdraw.filled_circle(surface, int(surface.get_rect().w/2), int(surface.get_rect().h/2), int(self.blastradius+2), pygame.color.THECOLORS["orange"])
-        particle(pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, entities[2], True)
+        particle(pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, entities[2], True, 0.3)
 
         #calculate which players where hit andd for how much damage
         self._playerhits()

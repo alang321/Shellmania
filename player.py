@@ -2,8 +2,9 @@ import pygame
 import numpy as np
 from missile import missile
 from Vector import Vector2d
-from particles import particle
 import random
+from particles import particle
+from particles import bouncyparticle
 
 class player:
     #drawing
@@ -45,7 +46,7 @@ class player:
         self.shootingstarttime = 0.0
         self.minshotpower = 0.1
         self.shotcharging = False
-        self.fullpowershottime = 1.5  # time to charge full power shot in seconds
+        self.fullpowershottime = 1.1  # time to charge full power shot in seconds
 
         # player name font
         self.font = pygame.font.SysFont('Arial', 10)
@@ -123,7 +124,7 @@ class player:
                 smoke = pygame.Surface([7 * 2 + 5, 7 * 2 + 5])
                 smoke.set_colorkey((0, 0, 0))
                 smoke.blit(self.smoke, (0, 0))
-                particle(self.pos.copy(), smoke, random.randint(2, 5), dir, 1.75, 0.19, self.entities[2], True, self.wind, False, 10.0)
+                particle(self.pos.copy(), smoke, random.randint(2, 5), dir, 1.75, 0.19, self.entities[2], True, 0.0, self.wind, 8.0)
 
         #move in the direction of movedir,if movedir is 0 dont move
         if self.left:
