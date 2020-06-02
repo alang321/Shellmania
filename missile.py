@@ -13,7 +13,7 @@ class missile:
     Cd = 0.7
     S = 0.005
 
-    def __init__(self, pos, dir, velocity, terrain, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
+    def __init__(self, pos, dir, velocity, terrain, wind, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
         #vel pos
         self.velocity = velocity * dir
         self.pos = pos
@@ -25,6 +25,7 @@ class missile:
         self.delete = False
         #player that fired the missile
         self.player = player
+        self.wind = wind
 
         self.m = m
 
@@ -58,7 +59,7 @@ class missile:
             particle(self.pos.copy(), trailsurface, 0.2, Vector2d(0.0, 0.0), 0, 0, self.entities[2], True)
 
         #this list holds all the forces acting on the missile
-        forces = [self._forcedrag(), self._forcegravity()]
+        forces = [self._forcedrag(), self._forcegravity(), self.wind.force]
 
         #update position and velocity depeneing on the timestep
         for i in range(2):

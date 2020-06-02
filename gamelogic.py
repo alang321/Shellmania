@@ -3,6 +3,7 @@ from player import player
 from background import background
 from terrain import terrain
 import random
+from wind import windforce
 
 class scorchedearth:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["grey"], pygame.color.THECOLORS["orange"]]
@@ -41,6 +42,10 @@ class scorchedearth:
         self.entities = [[], [], []]
         self.aliveplayers = []
 
+        #wind
+        self.maxwind = 4.0
+        self.wind = windforce(self.maxwind)
+
         #initilize fonts
         self.font = pygame.font.SysFont('Arial', 20)
         self.winnersubfont = pygame.font.SysFont('Arial', 25)
@@ -52,7 +57,7 @@ class scorchedearth:
         #create player objects with random colors
         random.shuffle(scorchedearth._playercolors)
         for i in range(len(playernames)):
-            player(playernames[i], self.gameTerrain, self.entities, self.aliveplayers, scorchedearth._playercolors[i % len(self._playercolors)])
+            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, scorchedearth._playercolors[i % len(self._playercolors)])
 
         #reset all variables
         self.restart()
@@ -94,6 +99,9 @@ class scorchedearth:
         self.currentindex = random.randint(0, len(self.playernames)-1)
         self.currentplayer = self.aliveplayers[self.currentindex]
         self.currentplayer.controlActive = True
+
+        #wind
+        self.wind.newWind()
 
     #game loop function
     def startgameloop(self):
@@ -138,13 +146,13 @@ class scorchedearth:
                 if self.currentplayer.shotcounter < self.shotlimit:
                     self.currentplayer.firekeyevent(event.type, self.elapsedtime)
             elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_left:
-                self.currentplayer.movedir = -1.0
+                self.currentplayer.left = True
             elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_right:
-                self.currentplayer.movedir = 1.0
+                self.currentplayer.right = True
             elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_left:
-                self.currentplayer.movedir = 0.0
+                self.currentplayer.left = False
             elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_right:
-                self.currentplayer.movedir = 0.0
+                self.currentplayer.right = False
             pass
         return True
 
@@ -174,11 +182,14 @@ class scorchedearth:
     def _switchplayer(self, oldplayer, newplayer):
         #only switch if htere are no more missiles flying
         if len(self.entities[1]) == 0:
+            #wind
+            self.wind.newWind()
             #oldplayer deativate control
             oldplayer.shotcharging = False
             oldplayer.controlActive = False
             oldplayer.shotcounter = 0
-            oldplayer.movedir = 0.0
+            self.currentplayer.left = False
+            self.currentplayer.right = False
             #newplayer activate control
             self.currentplayer = newplayer
             newplayer.controlActive = True
@@ -203,10 +214,25 @@ class scorchedearth:
 
     def _drawText(self, screen):
         if self.gamestate == self.gamestates["round"]:
+            #draw remaining time
             text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1))
             textsurface = self.font.render(text, False, self.currentplayer.color)
             screen.blit(textsurface, (50, 50))
 
+            #draw wind text
+            if self.maxwind == 0:
+                text = str(round(0.0, 1))
+            else:
+                text = str(abs(round((self.wind.force.x/self.maxwind)*10, 1)))
+            textsurface = self.font.render(text, False, self.currentplayer.color)
+            screen.blit(textsurface, (self.screensize[0]-50-textsurface.get_rect().w, 50))
+
+            if self.wind.force.x < 0:
+                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-10, 50+3), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+17), (self.screensize[0]-50-textsurface.get_rect().w-25, 50+20/2)))
+            elif self.wind.force.x > 0:
+                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-25, 50+3), (self.screensize[0]-50-textsurface.get_rect().w-25, 50+17), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+20/2)))
+
+            #draw shotcharging bar
             if self.currentplayer.shotcharging:
                 time = self.elapsedtime - self.currentplayer.shootingstarttime
             else:
@@ -226,7 +252,7 @@ class scorchedearth:
                 textsurface2 = self.winnerfont.render(text, False, self.aliveplayers[0].color)
                 textsurface.blit(textsurface2, (textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
 
-                pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
+                #pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
 
                 text = "Wins: " + str(self.aliveplayers[0].wins)
                 textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
