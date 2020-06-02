@@ -2,14 +2,15 @@ import pygame
 import pygame.gfxdraw
 from Vector import Vector2d
 from particles import particle
-
-
+from particles import bouncyparticle
+import random
 
 class explosion:
 
     def __init__(self, pos, terrain, entities, player, r=30.0, damage=0.8):
         #references
-        self.players = entities[0]
+        self.playerlist = entities[0]
+        self.particlelist = entities[2]
         #player that fired the missile that spawned the explosion
         self.player = player
         self.terrain = terrain
@@ -25,21 +26,30 @@ class explosion:
         self.maxdamagedropoff = 0.5
         self.blastradius = r
 
-        #explosion particle surface
-        surface = pygame.Surface([r*2+10, r*2+10])
-        surface.fill((0, 0, 0))
-        surface.set_colorkey((0, 0, 0))
-        pygame.gfxdraw.filled_circle(surface, int(surface.get_rect().w/2), int(surface.get_rect().h/2), int(self.blastradius+2), pygame.color.THECOLORS["orange"])
-        particle(pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, entities[2], True, 0.3)
-
         #calculate which players where hit andd for how much damage
         self._playerhits()
         self._destroyterrain()
+
+        #spawn explosion particles
+        self._explosionparticles()
         return
+
+    def _explosionparticles(self):
+        #explosion particle surface
+        surface = pygame.Surface([self.blastradius*2+10, self.blastradius*2+10])
+        surface.fill((0, 0, 0))
+        surface.set_colorkey((0, 0, 0))
+        pygame.gfxdraw.filled_circle(surface, int(surface.get_rect().w/2), int(surface.get_rect().h/2), int(self.blastradius+2), pygame.color.THECOLORS["orange"])
+        particle(self.pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, self.particlelist, True, 0.3)
+
+        for i in range(30):
+            direction = Vector2d(random.randint(-10, 10), random.randint(-2, 10)).getuvec()
+            velocity = random.randint(10, 30)
+            bouncyparticle(self.pos.copy(), self.terrain, surface, 5.0, direction, velocity, self.particlelist, True, 3.0, None, 100.0, 0.6)
 
     #get distance from explosion center to all players and call hit function if hit
     def _playerhits(self):
-        for i in self.players:
+        for i in self.playerlist:
             distance = self._distance(i.pos, self.pos)
             if distance < self.blastradius + i.width/2:
                 i.hit(self.damage-self.damage*(distance/self.blastradius)*self.maxdamagedropoff, self.player)

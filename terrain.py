@@ -31,7 +31,7 @@ class terrain:
 
         #generate x amount of random sin functions that get overlayed over each other to create random hilly terrain
         for i in range(7):
-            gain = random.randint(int(self.bounds[1] / 6), int(self.bounds[1] / 2.3))
+            gain = random.randint(int(self.bounds[1] / 4.5), int(self.bounds[1] / 2.3))
             freq = random.randint(int(self.bounds[0] / 40), int(self.bounds[0] / 8))
             phaseshift = random.randint(0, self.bounds[0] / 2)
             rand.append([gain, freq, phaseshift])

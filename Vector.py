@@ -40,7 +40,10 @@ class Vector2d:
 
     def getuvec(self):
         length = self.length()
-        return Vector2d(self.x/length, self.y/length)
+        if length == 0:
+            return Vector2d(0.0, 0.0)
+        else:
+            return Vector2d(self.x/length, self.y/length)
 
     def getnormalvec(self):
         return Vector2d(self.y, -self.x)
