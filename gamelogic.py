@@ -11,8 +11,8 @@ class scorchedearth:
 
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
-    lengthofturn = 15.0    #length of turn per player
-    shotlimit = 1  # max shots per round per player
+    lengthofturn = 150.0    #length of turn per player
+    shotlimit = 400  # max shots per round per player
 
     quitbutton = pygame.K_ESCAPE # quit button
     continuebutton = pygame.K_RETURN # continue button
@@ -126,7 +126,7 @@ class scorchedearth:
                 self.background.draw(self.screen)
                 self.gameTerrain.draw(self.screen)
                 self._drawEntities(self.screen, self.entities, dt)
-                self._drawText(self.screen)
+                self._drawText(self.screen, dt)
 
                 #display screen surface
                 pygame.display.flip()
@@ -212,10 +212,11 @@ class scorchedearth:
             for i in entitylist:
                 i.draw(screen)
 
-    def _drawText(self, screen):
+    def _drawText(self, screen, dt):
         if self.gamestate == self.gamestates["round"]:
             #draw remaining time
-            text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1))
+            text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1)) + "    FPS: "+ str(1.0/dt)
+            #text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1))
             textsurface = self.font.render(text, False, self.currentplayer.color)
             screen.blit(textsurface, (50, 50))
 

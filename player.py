@@ -191,8 +191,12 @@ class player:
     def fire(self, shootingpower):
         if self.controlActive:
             self.shotcounter += 1
-            missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
-            particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
+            #missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
+            #particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)smoke = pygame.Surface([7 * 2 + 5, 7 * 2 + 5])
+            smoke = pygame.Surface([7 * 2 + 5, 7 * 2 + 5])
+            smoke.set_colorkey((0, 0, 0))
+            smoke.blit(self.smoke, (0, 0))
+            bouncyparticle(self.turretEndpoint.copy(), self.terrain, smoke, 20.0, self.turretVector.copy(), 22.0*shootingpower, self.entities[2], True, 15.0, None, 100.0)
 
     #substract damage from health, if helath nis les than 0 set to destroyed
     def hit(self, damage, player):

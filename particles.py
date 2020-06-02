@@ -77,7 +77,7 @@ class particle:
 class bouncyparticle:
     g = 9.80665
 
-    def __init__(self, pos, terrain, surface, duration, dir, velocity, particles, fadeout=True, fadeoutstart=0.0, wind=None, m=1.0, coeffrest=0.6):
+    def __init__(self, pos, terrain, surface, duration, dir, velocity, particles, fadeout=True, fadeoutstart=0.0, wind=None, m=1.0, coeffrest=0.9):
         #entitiy list
         particles.append(self)
         self.delete = False
