@@ -31,7 +31,7 @@ class terrain:
 
         #generate x amount of random sin functions that get overlayed over each other to create random hilly terrain
         for i in range(7):
-            gain = random.randint(int(self.bounds[1] / 4.5), int(self.bounds[1] / 2.7))
+            gain = random.randint(int(self.bounds[1] / 6), int(self.bounds[1] / 2.3))
             freq = random.randint(int(self.bounds[0] / 40), int(self.bounds[0] / 8))
             phaseshift = random.randint(0, self.bounds[0] / 2)
             rand.append([gain, freq, phaseshift])
@@ -40,11 +40,11 @@ class terrain:
         for i in range(self.bounds[0]):
             height = 0.0
             for j in rand:
-                height += self.bounds[1] / 3 + numpy.sin(i/j[1] + j[2]) * j[0]
+                height += self.bounds[1] / 2 + numpy.sin(i/j[1] + j[2]) * j[0]
             height = height/len(rand)
 
             for j in range(0, self.bounds[1]):
-                if (self.bounds[1] - height) < j:
+                if (self.bounds[1] - height) < j or j >= self.bounds[1] - self.bedrockheight:
                     self.bitmap[i, j] = True
                 else:
                     self.bitmap[i, j] = False
