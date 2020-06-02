@@ -1,5 +1,9 @@
+from Vector import Vector2d
+
 class particle:
-    def __init__(self, pos, surface, duration, dir, velocity, slowdown, particles, fadeout=True):
+    g = 9.80665
+
+    def __init__(self, pos, surface, duration, dir, velocity, slowdown, particles, fadeout=True, wind=None, gravity=False, m=1.0):
         #entitiy list
         particles.append(self)
         self.delete = False
@@ -7,6 +11,15 @@ class particle:
         # pos vel, vel is a vector2d
         self.pos = pos
         self.velocity = velocity * dir
+
+        #forces
+        self.gravity = gravity
+        self.wind = wind
+        self.m = m
+        if self.wind != None:
+            self.windeffect = True
+        else:
+            self.windeffect = False
 
         #if particle shouild fade out linearly
         self.fadeout = fadeout
@@ -35,9 +48,16 @@ class particle:
             #percentage of the total particel life
             percentage = (self.timer/self.duration)
 
+            forces = []
+            if self.gravity:
+                forces.append(self._forcegravity())
+            if self.windeffect:
+                forces.append(self.wind.force)
+
             #change pos
             for i in range(2):
-                self.pos[i] += self.velocity[i] * dt
+                self.velocity[i] += (sum([j[i] for j in forces]) / self.m) * dt
+                self.pos[i] += 20.0 * self.velocity[i] * dt
 
             # if fadeout set opacity linearly from 100%-0% from start to end
             if self.fadeout:
@@ -48,3 +68,7 @@ class particle:
                 self.velocity[i] *= 1.0 - self.slowdown * dt
         else:
             self.delete = True
+
+    # calculates the force of gravity in x and y direction
+    def _forcegravity(self):
+        return Vector2d(0, (self.g * self.m))
