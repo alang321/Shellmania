@@ -26,26 +26,34 @@ class explosion:
         self.maxdamagedropoff = 0.5
         self.blastradius = r
 
+        #spawn explosion particles
+        self._explosionparticles()
+
         #calculate which players where hit andd for how much damage
         self._playerhits()
         self._destroyterrain()
-
-        #spawn explosion particles
-        self._explosionparticles()
         return
 
     def _explosionparticles(self):
+        dirt = pygame.Surface([3, 3])
+        dirt.fill((0, 0, 0))
+        dirt.set_colorkey((0, 0, 0))
+        #pygame.gfxdraw.filled_circle(dirt, int(dirt.get_rect().w/2), int(dirt.get_rect().h/2), 2, self.terrain.groundcolor)
+        pygame.draw.rect(dirt, self.terrain.groundcolor, ((0, 0), (3, 3)))
+
+        normalvec = self.terrain.normalmap[int(self.pos[0])]
+        surfacevec = self.terrain.normalmap[int(self.pos[0])].getnormalvec()
+        for i in range(400):
+            direction = (normalvec * (random.randint(-200, 400)/10.0) + (random.randint(-80, 80)/10.0) * surfacevec).getuvec()
+            velocity = random.randint(0, 1800)/100.0
+            bouncyparticle(self.pos.copy(), self.terrain, dirt, 4.0, direction, velocity, self.particlelist, True, 2.5, None, 1000, 0.3)
+
         #explosion particle surface
         surface = pygame.Surface([self.blastradius*2+10, self.blastradius*2+10])
         surface.fill((0, 0, 0))
         surface.set_colorkey((0, 0, 0))
         pygame.gfxdraw.filled_circle(surface, int(surface.get_rect().w/2), int(surface.get_rect().h/2), int(self.blastradius+2), pygame.color.THECOLORS["orange"])
-        particle(self.pos, surface, 2, Vector2d(0.0, 0.0), 0.0, 0.0, self.particlelist, True, 0.3)
-
-        for i in range(30):
-            direction = Vector2d(random.randint(-10, 10), random.randint(-2, 10)).getuvec()
-            velocity = random.randint(10, 30)
-            bouncyparticle(self.pos.copy(), self.terrain, surface, 5.0, direction, velocity, self.particlelist, True, 3.0, None, 100.0, 0.6)
+        particle(self.pos, surface, 3, Vector2d(0.0, 0.0), 0.0, 0.0, self.particlelist, True, 0.6)
 
     #get distance from explosion center to all players and call hit function if hit
     def _playerhits(self):
