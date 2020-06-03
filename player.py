@@ -227,12 +227,12 @@ class player:
 
             return mousevec
         else:
-            angle = self.turretVector.find360CCWAngle(self.terrain.normalmap[int(self.pos[0])])
+            #angle = self.turretVector.find360CCWAngle(self.terrain.normalmap[int(self.pos[0])])
 
-            if self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:
-                if np.pi < angle:
-                    return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(self.maxturretangle)
-                else:
-                    return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(-self.maxturretangle)
+            # self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:
+                #if np.pi < angle:
+                    #return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(self.maxturretangle)
+                #else:
+                    #return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(-self.maxturretangle)
 
             return self.turretVector
