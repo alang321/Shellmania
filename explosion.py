@@ -43,7 +43,7 @@ class explosion:
 
         normalvec = self.terrain.normalmap[int(self.pos[0])]
         surfacevec = self.terrain.normalmap[int(self.pos[0])].getnormalvec()
-        for i in range(400):
+        for i in range(100):
             direction = (normalvec * (random.randint(-200, 400)/10.0) + (random.randint(-80, 80)/10.0) * surfacevec).getuvec()
             velocity = random.randint(0, 1800)/100.0
             bouncyparticle(self.pos.copy(), self.terrain, dirt, 4.0, direction, velocity, self.particlelist, True, 2.5, None, 1000, 0.3)
