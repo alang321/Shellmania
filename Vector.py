@@ -1,5 +1,4 @@
 import numpy as np
-import inspect
 
 class Vector2d:
 
