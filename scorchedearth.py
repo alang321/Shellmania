@@ -1,5 +1,3 @@
-import pygame
-
 from gamelogic import scorchedearth
 
 playernames = []
