@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 from missile import missile
+from bouncybomb import bouncybomb
 from Vector import Vector2d
 import random
 from particles import particle
@@ -191,7 +192,7 @@ class player:
     def fire(self, shootingpower):
         if self.controlActive:
             self.shotcounter += 1
-            missile(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
+            bouncybomb(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
             particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed

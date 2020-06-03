@@ -154,7 +154,6 @@ class bouncyparticle:
                             break
 
                     if not newpos:
-                        print("old pos update")
                         self.pos[1] = float(self.terrain.heightmap[int(self.pos[0])])
 
                     #newvelocity

@@ -43,7 +43,7 @@ class scorchedearth:
         self.aliveplayers = []
 
         #wind
-        self.maxwind = 4.0
+        self.maxwind = 3.0
         self.wind = windforce(self.maxwind)
 
         #initilize fonts
