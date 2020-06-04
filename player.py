@@ -53,7 +53,7 @@ class player:
         self.font = pygame.font.SysFont('Arial', 10)
 
         #turret
-        self.turretVector = Vector2d(random.randint(-5.0, 5.0), -5.0).getuvec()
+        self.turretVector = Vector2d(0.0, -1.0)
         self.turretEndpoint = []
         self.turretOrigin = []
 
@@ -101,7 +101,12 @@ class player:
         self.destroyed = False
         self.shotcounter = 0
 
-    def _setonground(self):
+        #set tank on ground and update turret vector
+        self.setonground()
+        self.turretVector = Vector2d(random.randint(-5.0, 5.0), -5.0).getuvec()
+        self.updateTurret()
+
+    def setonground(self):
         #get height at x loaction from terrain
         height = float(self.terrain.heightmap[int(self.pos[0])])
 
@@ -127,12 +132,18 @@ class player:
                 smoke.blit(self.smoke, (0, 0))
                 particle(self.pos.copy(), smoke, random.randint(2, 5), dir, 1.75, 0.19, self.entities[2], True, 0.0, self.wind, 8.0)
 
-        #move in the direction of movedir,if movedir is 0 dont move
-        if self.left:
-            self.move(dt, -1.0)
-        elif self.right:
-            self.move(dt, 1.0)
+        if self.controlActive:
+            #move in the direction of movedir,if movedir is 0 dont move
+            if self.left:
+                self.move(dt, -1.0)
+            elif self.right:
+                self.move(dt, 1.0)
 
+            self.updateTurret()
+            return
+
+    #this method gets called when the players is moved, or when explosion happens, so it falls on ground
+    def updateTurret(self):
         #calcualte turrent origin and endpoint
         self.turretOrigin = [self.pos[0] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].x, self.pos[1] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].y]
         #get the turrent direction as a unit vector
@@ -140,9 +151,6 @@ class player:
         #caclulates the endpoint of the turrent
         self.turretEndpoint = [self.turretOrigin[0] + self.turretLength * self.turretVector.x, self.turretOrigin[1] + self.turretLength * self.turretVector.y]
 
-        #set on ground
-        self._setonground()
-        return
 
     #draw the tank with the current values for position and angle
     def draw(self, screen):
@@ -167,15 +175,15 @@ class player:
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
     def move(self, dt, movedir):
-        if self.controlActive and movedir != 0.0:
-            #movement direction vector, normal vector to the surface normal
-            dirvector = -movedir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
+        #movement direction vector, normal vector to the surface normal
+        dirvector = -movedir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
 
-            newx = self.pos[0] + dirvector.x * dt * self.speed
+        newx = self.pos[0] + dirvector.x * dt * self.speed
 
-            #checks if newpos is in bounds and if height difference exceeds maximum
-            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
-                self.pos[0] = newx
+        #checks if newpos is in bounds and if height difference exceeds maximum
+        if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
+            self.pos[0] = newx
+            self.setonground()
 
     def firekeyevent(self, eventtype, elapsedtime):
         if self.controlActive:
@@ -212,28 +220,26 @@ class player:
 
     #return the turret angle limited by bounds
     def _getTurretUnitVector(self):
-        target = [float(i) for i in pygame.mouse.get_pos()]
+        if self.controlActive:
+            target = [float(i) for i in pygame.mouse.get_pos()]
 
+            if self.turretOrigin != target:
+                mousevec = Vector2d.getvectorfrompoints(self.turretOrigin, target).getuvec()
 
-        if self.turretOrigin != target and self.controlActive:
-            mousevec = Vector2d.getvectorfrompoints(self.turretOrigin, target).getuvec()
-
-            angle = mousevec.find360CCWAngle(self.terrain.normalmap[int(self.pos[0])])
-
-            if self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:
-                if np.pi < angle:
-                    return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(self.maxturretangle)
-                else:
-                    return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(-self.maxturretangle)
-
-            return mousevec
+                return self._limitvecangle(mousevec, self.terrain.normalmap[int(self.pos[0])])
         else:
-            #angle = self.turretVector.find360CCWAngle(self.terrain.normalmap[int(self.pos[0])])
+            return self._limitvecangle(self.turretVector, self.terrain.normalmap[int(self.pos[0])])
 
-            # self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:
-                #if np.pi < angle:
-                    #return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(self.maxturretangle)
-                #else:
-                    #return self.terrain.normalmap[int(self.pos[0])].getrotatedvect(-self.maxturretangle)
+    #return the vector limited by the maximum angle bounds
+    def _limitvecangle(self, target, reference):
 
-            return self.turretVector
+        angle = target.find360CCWAngle(reference)
+
+        #if outside of limit return rotated to max angle, else return target vector
+        if self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:
+            if np.pi < angle:
+                return reference.getrotatedvect(self.maxturretangle)
+            else:
+                return reference.getrotatedvect(-self.maxturretangle)
+        else:
+            return target

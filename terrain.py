@@ -61,6 +61,7 @@ class terrain:
 
     def updateNormalmap(self, rangex):
         distance = 7
+
         for i in rangex:
             origin = [max(float(i - distance), 0.0), float(self.heightmap[max(i - distance, 0)])]
             target = [float(min(i + distance, self.bounds[0]-1)), float(self.heightmap[min(i + distance, self.bounds[0] - 1)])]

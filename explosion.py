@@ -31,7 +31,11 @@ class explosion:
 
         #calculate which players where hit andd for how much damage
         self._playerhits()
+        #destroy the terrain in a circular pattern around pos
         self._destroyterrain()
+
+        #set all players on ground
+        self._setplayersonground()
         return
 
     def _explosionparticles(self):
@@ -61,6 +65,11 @@ class explosion:
             distance = self._distance(i.pos, self.pos)
             if distance < self.blastradius + i.width/2:
                 i.hit(self.damage-self.damage*(distance/self.blastradius)*self.maxdamagedropoff, self.player)
+
+    def _setplayersonground(self):
+        for i in self.playerlist:
+            i.setonground()
+            i.updateTurret()
 
     #get the distance between two points
     def _distance(self, pos1, pos2):
