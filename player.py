@@ -2,13 +2,14 @@ import pygame
 import numpy as np
 from projectiles.bouncybomb import bouncybomb
 from projectiles.missile import missile
+from projectiles.teleportermissile import teleportermissile
 from Vector import Vector2d
 import random
 from particles import particle
 
 
 class player:
-    weapon = missile
+    weapon = teleportermissile
 
     #drawing
     body = ((0, 15.0), (2.5, 20.0), (22.5, 20.0), (25, 15), (18.5, 15.0), (15.5, 12.0), (9.5, 12.0), (6.5, 15.0))

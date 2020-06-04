@@ -1,11 +1,10 @@
 import pygame
 from Vector import Vector2d
-from explosion import explosion
 from particles import particle
 
-class teleportmissile:
-    width = 6
-    height = 6
+class teleportermissile:
+    width = 9
+    height = 9
 
     g = 9.80065
     rho = 1.225
@@ -32,31 +31,13 @@ class teleportmissile:
         #main sprite
         self.sprite = pygame.Surface([self.width, self.height], pygame.SRCALPHA)
         self.rect = self.sprite.get_rect()
-        pygame.draw.circle(self.sprite, self.color, [int(self.rect.w / 2.0), int(self.rect.h / 2.0)], 2)
-
-        #trail particle
-        trailsurface = pygame.Surface([7 * 2 + 5, 7 * 2 + 5])
-        trailsurface.fill((0, 0, 0))
-        trailsurface.set_colorkey((0, 0, 0))
-        pygame.draw.circle(trailsurface, self.color, [int(self.rect.w / 2.0), int(self.rect.h / 2.0)], 2)
-        self.trailsurface = trailsurface
-        self.trailinterval = 0.003
-        self.timesincetrail = 0.0
+        pygame.draw.circle(self.sprite, pygame.color.THECOLORS["white"], [int(self.rect.w / 2.0), int(self.rect.h / 2.0)], 4)
         return
 
     def draw(self, screen):
         screen.blit(self.sprite, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h/2])
 
     def update(self, dt):
-        #trail system
-        self.timesincetrail += dt
-        if self.timesincetrail > self.trailinterval:
-            self.timesincetrail = 0.0
-            trailsurface = pygame.Surface([6, 6])
-            trailsurface.set_colorkey((0, 0, 0))
-            trailsurface.blit(self.trailsurface, (0, 0))
-            particle(self.pos.copy(), trailsurface, 0.2, Vector2d(0.0, 0.0), 0, 0, self.entities[2], True)
-
         #this list holds all the forces acting on the missile
         forces = [self._forcedrag(), self._forcegravity(), self.wind.force]
 
@@ -69,7 +50,22 @@ class teleportmissile:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion(self.pos, self.terrain, self.entities, self.player)
+                #set player x position to own x position
+                self.player.pos[0] = self.pos[0]
+
+                #set player on ground and update turret
+                self.player.setonground()
+                self.player.updateTurret()
+
+                #white explosion particle at player position
+                radius = 23
+                surface = pygame.Surface([radius * 2 + 5, radius * 2 + 5])
+                surface.fill((0, 0, 0))
+                surface.set_colorkey((0, 0, 0))
+                pygame.draw.circle(surface, pygame.color.THECOLORS["white"], (int(surface.get_rect().w / 2), int(surface.get_rect().h / 2)), radius)
+                particle(self.player.pos, surface, 2.5, Vector2d(0.0, 0.0), 0.0, 0.0, self.entities[2], True, 0.3)
+
+                #delete missile
                 self.delete = True
         else:
             self.delete = True
