@@ -7,7 +7,7 @@ import random
 
 class explosion:
 
-    def __init__(self, pos, terrain, entities, player, r=10.0, damage=0.8):
+    def __init__(self, pos, terrain, entities, player, r=10.0, damage=0.8, maxdropoff = 0.5):
         #references
         self.playerlist = entities[0]
         self.particlelist = entities[2]
@@ -23,7 +23,7 @@ class explosion:
         #max damage
         self.damage = damage
         #damage ratio at maximum distance from pos
-        self.maxdamagedropoff = 0.5
+        self.maxdamagedropoff = maxdropoff
         self.blastradius = r
         #for faster distance calculation
         self.blastradiussquared = self.blastradius**2

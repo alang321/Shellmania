@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 from projectiles.bouncybomb import bouncybomb
 from projectiles.missile import missile
+from projectiles.airstrike import airstrike
 from projectiles.teleportermissile import teleportermissile
 from Vector import Vector2d
 import random
@@ -26,7 +27,7 @@ class player:
     key_left = pygame.K_a
     key_right = pygame.K_d
 
-    smokeinterval = 0.2
+    smokeinterval = 0.1
 
     def __init__(self, name, terrain, wind, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):
         #references
@@ -78,7 +79,7 @@ class player:
         pygame.draw.circle(smoke, pygame.color.THECOLORS["grey"], (int(smoke.get_rect().w / 2), int(smoke.get_rect().h / 2)), 7)
         self.smoke = smoke
         #fire
-        fireorange = pygame.Surface([7 * 2 + 5, 7 * 2 + 5])
+        fireorange = pygame.Surface([7 * 2 + 2, 7 * 2 + 2])
         fireorange.fill((0, 0, 0))
         fireorange.set_colorkey((0, 0, 0))
         pygame.draw.circle(fireorange, pygame.color.THECOLORS["orange"], (int(fireorange.get_rect().w / 2), int(fireorange.get_rect().h / 2)), 4)

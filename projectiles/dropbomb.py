@@ -4,9 +4,9 @@ from explosion import explosion
 from particles import particle
 
 
-class missile:
+class dropbomb:
     width = 6
-    height = 6
+    height = 20
 
     g = 9.80065
     rho = 1.225
@@ -25,11 +25,16 @@ class missile:
         self.delete = False
         #player that fired the missile
         self.player = player
-        self.wind = wind
 
         self.m = m
 
         self.color = color
+        #main sprite
+        self.sprite = pygame.Surface([self.width, self.height], pygame.SRCALPHA)
+        self.rect = self.sprite.get_rect()
+        pygame.draw.ellipse(self.sprite, self.color, ((0, 3), (self.width, self.height)))
+        pygame.draw.rect(self.sprite, self.color, ((0, 0), (self.width, 4)))
+
 
         #trail particle
         self.trailcounter = 0
@@ -41,41 +46,23 @@ class missile:
         return
 
     def draw(self, screen):
-        #draw the trail
-        #first from current pos to last point
-        pygame.draw.line(screen, self.color, self.pos, self.trailhistory[self.currentindex], 4)
-        # then all the other ones
-        counter = 0
-        for i in range(self.currentindex, self.currentindex - self.traillength+1, -1):
-            counter += 1
-            if self.trailhistory[i-1] == None:
-                break
-            else:
-                pygame.draw.line(screen, self.color, self.trailhistory[i], self.trailhistory[i-1], 4)
+        screen.blit(self.sprite, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h/2])
 
     def update(self, dt):
         #this list holds all the forces acting on the missile
-        forces = [self._forcedrag(), self._forcegravity(), self.wind.force]
+        forces = [self._forcedrag(), self._forcegravity()]
 
         #update position and velocity depeneing on the timestep
         for i in range(2):
             self.velocity[i] += (sum([j[i] for j in forces]) / self.m) * dt
             self.pos[i] += 20.0 * self.velocity[i] * dt
 
-        #trail system
-        self.timesincetrail += dt
-        if self.timesincetrail >= self.trailinterval:
-            self.timesincetrail = 0.0
-            self.currentindex = self.trailcounter % self.traillength
-            self.trailhistory[self.currentindex] = self.pos.copy()
-            self.trailcounter += 1
-
 
         #if new pos is outside bounds delete
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion(self.pos, self.terrain, self.entities, self.player, 20, 0.7, 0.3)
+                explosion(self.pos, self.terrain, self.entities, self.player, 14, 0.55, 0.3)
                 self.delete = True
         else:
             self.delete = True

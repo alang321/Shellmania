@@ -84,7 +84,7 @@ class bouncybomb:
                     #newvelocity
                     self.velocity = self.velocity.getreflectionvect(self.terrain.normalmap[int(self.pos[0])]) * self.coeffrest
                 else:
-                    explosion(self.pos, self.terrain, self.entities, self.player)
+                    explosion(self.pos, self.terrain, self.entities, self.player, 30, 0.9, 0.4)
                     self.delete = True
         else:
             self.delete = True
