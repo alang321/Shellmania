@@ -69,7 +69,7 @@ class bouncybomb:
 
                     newposset = False
 
-                    for i in np.arange(0, 6, 0.3):
+                    for i in np.arange(0, 9, 0.3):
                         vec = normal * i
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 

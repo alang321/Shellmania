@@ -143,17 +143,18 @@ class bouncyparticle:
                     normal = self.terrain.normalmap[int(self.pos[0])]
 
                     newpos = False
+                    newposset = False
 
-                    for i in np.arange(0, 5, 0.3):
+                    for i in np.arange(0, 9, 0.3):
                         vec = normal * i
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 
                         if newpos[1] < self.terrain.heightmap[int(newpos[0])]:
                             self.pos = newpos
-                            newpos = True
+                            newposset = True
                             break
 
-                    if not newpos:
+                    if not newposset:
                         self.pos[1] = float(self.terrain.heightmap[int(self.pos[0])])
 
                     #newvelocity

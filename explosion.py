@@ -7,7 +7,7 @@ import random
 
 class explosion:
 
-    def __init__(self, pos, terrain, entities, player, r=30.0, damage=0.8):
+    def __init__(self, pos, terrain, entities, player, r=10.0, damage=0.8):
         #references
         self.playerlist = entities[0]
         self.particlelist = entities[2]
@@ -25,6 +25,8 @@ class explosion:
         #damage ratio at maximum distance from pos
         self.maxdamagedropoff = 0.5
         self.blastradius = r
+        #for faster distance calculation
+        self.blastradiussquared = self.blastradius**2
 
         #spawn explosion particles
         self._explosionparticles()
@@ -47,7 +49,7 @@ class explosion:
 
         normalvec = self.terrain.normalmap[int(self.pos[0])]
         surfacevec = self.terrain.normalmap[int(self.pos[0])].getnormalvec()
-        for i in range(40):
+        for i in range(int(self.blastradius * 1.2)):
             direction = (normalvec * (random.randint(-50, 400)/10.0) + (random.randint(-80, 80)/10.0) * surfacevec).getuvec()
             velocity = random.randint(0, 1100)/100.0
             bouncyparticle(self.pos.copy(), self.terrain, dirt, 3.0, direction, velocity, self.particlelist, True, 2.0, None, 1000, 0.3)
@@ -75,6 +77,9 @@ class explosion:
     def _distance(self, pos1, pos2):
         return Vector2d.getvectorfrompoints(pos2, pos1).length()
 
+    def _distancesquared(self, pos1, pos2):
+        return (pos2[0]-pos1[0])**2 + (pos2[1] - pos1[1])**2
+
     def _destroyterrain(self):
         rangex = range(int(max(self.pos[0] - self.blastradius, 0)),
                        int(min(self.pos[0] + self.blastradius, self.terrain.bounds[0])))
@@ -83,7 +88,7 @@ class explosion:
 
         for i in rangex:
             for j in rangey:
-                if self._distance([i, j], self.pos) < self.blastradius:
+                if self._distancesquared([i, j], self.pos) < self.blastradiussquared:
                     self.terrain.bitmap[i, j] = False
 
         # drop down overhangs and floating parts

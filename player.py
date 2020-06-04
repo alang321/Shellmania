@@ -43,6 +43,9 @@ class player:
         self.kills = 0
         self.wins = 0
 
+        # set to true if tank is at a new position, so that body gets redrawn
+        self.newpos = True
+
         #shooting
         self.shootingstarttime = 0.0
         self.minshotpower = 0.1
@@ -119,6 +122,8 @@ class player:
 
         self.pos[1] = height - heightdifference * abs(relpos)
 
+        self.newpos = True
+
 
     def update(self, dt):
         #smoke system
@@ -158,14 +163,17 @@ class player:
             self.sprite.fill((0, 0, 0, 0))
             #turret
             pygame.draw.line(screen, self.color, self.turretOrigin, self.turretEndpoint, 3)
-            #body
-            pygame.draw.polygon(self.sprite, self.color, self.body)
 
-            #rotate body
-            rotated = pygame.transform.rotate(self.sprite, np.rad2deg(self.terrain.normalmap[int(self.pos[0])].find360CCWAngle(Vector2d(0.0, -1.0))))
+            #only draw rotated body when pos is updated
+            if self.newpos:
+                self.newpos = False
+                #body
+                pygame.draw.polygon(self.sprite, self.color, self.body)
+                #rotate body
+                self.rotatedbody = pygame.transform.rotate(self.sprite, np.rad2deg(self.terrain.normalmap[int(self.pos[0])].find360CCWAngle(Vector2d(0.0, -1.0))))
 
             #draw
-            screen.blit(rotated, (self.pos[0] - rotated.get_width() / 2.0, self.pos[1] - rotated.get_height() / 2.0))
+            screen.blit(self.rotatedbody, (self.pos[0] - self.rotatedbody.get_width() / 2.0, self.pos[1] - self.rotatedbody.get_height() / 2.0))
         #draw text and health bar
         if not self.destroyed:
             pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
