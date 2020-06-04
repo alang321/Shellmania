@@ -6,6 +6,8 @@ from particles import particle
 
 
 class bouncybomb:
+    _name = "Bouncebomb"
+
     width = 10
     height = 10
 

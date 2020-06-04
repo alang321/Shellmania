@@ -5,6 +5,8 @@ from particles import particle
 
 
 class missile:
+    _name = "Missile"
+
     width = 6
     height = 6
 

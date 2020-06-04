@@ -5,6 +5,8 @@ import random
 from projectiles.dropbomb import dropbomb
 
 class airstrike:
+    _name = "Airstrike"
+
     width = 5
     height = 5
 
@@ -85,7 +87,7 @@ class airstrike:
 
                 if not self.bombsdeployed and self.alivetimer > self.bombdelay:
                     self.bombsdeployed = True
-                    distance = 25
+                    distance = 27
                     for i in range(-2, 3):
                         dropbomb([self.pos[0] + i * distance, -20], Vector2d(0.0, 1.0), random.randint(20, 27), self.terrain, self.wind, self.entities, self.player, 10.0, self.color)
 

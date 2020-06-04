@@ -7,10 +7,11 @@ from projectiles.teleportermissile import teleportermissile
 from Vector import Vector2d
 import random
 from particles import particle
+from playerinventory import playerinventory
 
 
 class player:
-    weapon = teleportermissile
+    weapon = bouncybomb
 
     #drawing
     body = ((0, 15.0), (2.5, 20.0), (22.5, 20.0), (25, 15), (18.5, 15.0), (15.5, 12.0), (9.5, 12.0), (6.5, 15.0))
@@ -26,6 +27,8 @@ class player:
     key_fire = pygame.K_SPACE
     key_left = pygame.K_a
     key_right = pygame.K_d
+    key_previous = pygame.K_q
+    key_next = pygame.K_e
 
     smokeinterval = 0.1
 
@@ -41,6 +44,9 @@ class player:
         self.name = name
         #helath from 0 to 1
         self.health = 1.0
+
+        # TODO : default inventory that gets reset each respawn
+        self.inventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, -1, -1, -1], 0)
 
         #counters
         self.shotcounter = 0
@@ -151,16 +157,6 @@ class player:
             self.updateTurret()
             return
 
-    #this method gets called when the players is moved, or when explosion happens, so it falls on ground
-    def updateTurret(self):
-        #calcualte turrent origin and endpoint
-        self.turretOrigin = [self.pos[0] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].x, self.pos[1] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].y]
-        #get the turrent direction as a unit vector
-        self.turretVector = self._getTurretUnitVector()
-        #caclulates the endpoint of the turrent
-        self.turretEndpoint = [self.turretOrigin[0] + self.turretLength * self.turretVector.x, self.turretOrigin[1] + self.turretLength * self.turretVector.y]
-
-
     #draw the tank with the current values for position and angle
     def draw(self, screen):
         if self.drawToggle:
@@ -184,6 +180,23 @@ class player:
             pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
             screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
         return
+
+    #this method gets called when the players is moved, or when explosion happens, so it falls on ground
+    def updateTurret(self):
+        #calcualte turrent origin and endpoint
+        self.turretOrigin = [self.pos[0] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].x, self.pos[1] + self.turretstart * self.terrain.normalmap[int(self.pos[0])].y]
+        #get the turrent direction as a unit vector
+        self.turretVector = self._getTurretUnitVector()
+        #caclulates the endpoint of the turrent
+        self.turretEndpoint = [self.turretOrigin[0] + self.turretLength * self.turretVector.x, self.turretOrigin[1] + self.turretLength * self.turretVector.y]
+
+    def nextitem(self):
+        if self.controlActive:
+            self.inventory.next()
+
+    def previousitem(self):
+        if self.controlActive:
+            self.inventory.previous()
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
     def move(self, dt, movedir):
@@ -211,9 +224,11 @@ class player:
     #shoot a missile in turret vect direction
     def fire(self, shootingpower):
         if self.controlActive:
-            self.shotcounter += 1
-            self.weapon(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
-            particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
+            weapon = self.inventory.usecurrent()
+            if weapon != None:
+                self.shotcounter += 1
+                weapon(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
+                particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed
     def hit(self, damage, player):

@@ -3,6 +3,8 @@ from Vector import Vector2d
 from particles import particle
 
 class teleportermissile:
+    _name = "Teleporter"
+
     width = 9
     height = 9
 
