@@ -14,14 +14,14 @@ class bouncybomb:
     Cd = 0.7
     S = 0.005
 
-    def __init__(self, pos, dir, velocity, terrain, wind, entities, player, m=1.0, color=pygame.color.THECOLORS["red"], coeffrest=0.6):
+    def __init__(self, pos, dir, velocity, terrain, wind, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
         #vel pos
         self.velocity = velocity * dir
         self.pos = pos
 
         self.maxbounces = 1
         self.bounces = 0
-        self.coeffrest = coeffrest
+        self.coeffrest = 0.6
 
         #references
         self.terrain = terrain

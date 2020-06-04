@@ -1,13 +1,15 @@
 import pygame
 import numpy as np
-from missile import missile
-from bouncybomb import bouncybomb
+from projectiles.bouncybomb import bouncybomb
+from projectiles.missile import missile
 from Vector import Vector2d
 import random
 from particles import particle
-from particles import bouncyparticle
+
 
 class player:
+    weapon = missile
+
     #drawing
     body = ((0, 15.0), (2.5, 20.0), (22.5, 20.0), (25, 15), (18.5, 15.0), (15.5, 12.0), (9.5, 12.0), (6.5, 15.0))
     #turret length in pixel
@@ -23,7 +25,7 @@ class player:
     key_left = pygame.K_a
     key_right = pygame.K_d
 
-    smokeinterval = 0.1
+    smokeinterval = 0.2
 
     def __init__(self, name, terrain, wind, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):
         #references
@@ -208,7 +210,7 @@ class player:
     def fire(self, shootingpower):
         if self.controlActive:
             self.shotcounter += 1
-            bouncybomb(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
+            self.weapon(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
             particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed
