@@ -77,7 +77,7 @@ class missile:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion(self.pos, self.terrain, self.entities, self.player, 20, 0.7, 0.3)
+                explosion(self.pos, self.terrain, self.entities, self.player, 20, 0.4, 0.3)
                 self.delete = True
         else:
             self.delete = True

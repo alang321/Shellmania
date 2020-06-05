@@ -59,7 +59,7 @@ class dropbomb:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion([self.pos[0], self.terrain.heightmap[int(self.pos[0])]], self.terrain, self.entities, self.player, 15, 0.4, 0.3, 0.8)
+                explosion([self.pos[0], self.terrain.heightmap[int(self.pos[0])]], self.terrain, self.entities, self.player, 15, 0.4, 0.1, 0.8)
                 self.delete = True
         else:
             self.delete = True

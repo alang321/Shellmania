@@ -11,8 +11,8 @@ class scorchedearth:
 
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
-    lengthofturn = 150.0    #length of turn per player
-    shotlimit = 10  # max shots per round per player
+    lengthofturn = 15.0    #length of turn per player
+    shotlimit = 1  # max shots per round per player
 
     quitbutton = pygame.K_ESCAPE # quit button
     continuebutton = pygame.K_RETURN # continue button

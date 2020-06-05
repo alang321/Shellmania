@@ -1,5 +1,12 @@
 from gamelogic import scorchedearth
 
+# Left right with a and d
+# switch item q and e
+# aim with mouse
+# shoot with space bar
+# enter to start new game
+# escape to quit
+
 playernames = []
 screenSize = [1200, 800]
 #screenSize = [1920, 1080]

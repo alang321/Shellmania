@@ -11,7 +11,7 @@ from playerinventory import playerinventory
 
 
 class player:
-    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, -1, -1, -1], 0)
+    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, 2, 1, 2], 0)
 
     weapon = bouncybomb
 
