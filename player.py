@@ -194,11 +194,11 @@ class player:
 
     def nextitem(self):
         if self.controlActive:
-            self.inventory.next()
+            self.inventory.nextnonzero()
 
     def previousitem(self):
         if self.controlActive:
-            self.inventory.previous()
+            self.inventory.previousnonzero()
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
     def move(self, dt, movedir):
@@ -226,7 +226,7 @@ class player:
     #shoot a missile in turret vect direction
     def fire(self, shootingpower):
         if self.controlActive:
-            weapon = self.inventory.usecurrent()
+            weapon = self.inventory.usecurrent(True)
             if weapon != None:
                 self.shotcounter += 1
                 weapon(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)

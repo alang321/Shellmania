@@ -20,12 +20,31 @@ class playerinventory:
 
     #returns true if non zero item found, false if not
     def nextnonzero(self):
-        # TODO : implement this function
-        return
+        counter = 0
+        self.next()
+
+        while self.amounts[self.index] == 0:
+            counter += 1
+            self.next()
+            if counter >= self.slots:
+                if self.amounts[self.index] == 0:
+                    return False
+                else:
+                    break
+        return True
 
     #returns true if non zero item found, false if not
     def previousnonzero(self):
-        # TODO : implement this function
+        counter = 0
+        self.previous()
+        while self.amounts[self.index] == 0:
+            counter += 1
+            self.previous()
+            if counter >= self.slots:
+                if self.amounts[self.index] == 0:
+                    return False
+                else:
+                    break
         return
 
     #returns next item in list
@@ -47,15 +66,23 @@ class playerinventory:
     def getcurrentamount(self):
         return self.amounts[self.index]
 
-    #return the current object and subtracts one of its amount, switch to default if empty
-    def usecurrent(self):
+    #return the current object and subtracts one of its amount, switch to next non zero if paramtere is true and amount is zero
+    def usecurrent(self, switchwhenemtpy):
         if self.amounts[self.index] == 0:
+            #switch to next nonzero item if empty
+            if switchwhenemtpy and self.amounts[self.index] == 0:
+                self.nextnonzero()
             return None
         elif self.amounts[self.index] < 0:
             return self.items[self.index]
         else:
             self.amounts[self.index] -= 1
-            return self.items[self.index]
+            item = self.items[self.index]
+            #switch to next nonzero item if empty
+            if switchwhenemtpy and self.amounts[self.index] == 0:
+                self.nextnonzero()
+
+            return item
 
     #add a number to total amount of a given type, raises exception when item is not in inventory
     def addtoitemamount(self, item, amount):
