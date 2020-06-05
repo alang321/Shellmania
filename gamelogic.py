@@ -48,8 +48,8 @@ class scorchedearth:
 
         #initilize fonts
         self.font = pygame.font.SysFont('Calibri', 20)
-        self.winnersubfont = pygame.font.SysFont('Calibri', 25)
-        self.winnerfont = pygame.font.SysFont('Calibri', 50)
+        self.winnersubfont = pygame.font.SysFont('Arial', 25)
+        self.winnerfont = pygame.font.SysFont('Arial', 50)
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
@@ -266,7 +266,7 @@ class scorchedearth:
                 textsurface2 = self.winnerfont.render(text, False, self.aliveplayers[0].color)
                 textsurface.blit(textsurface2, (textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
 
-                #pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
+                pygame.draw.rect(textsurface, pygame.color.THECOLORS["white"], ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)))
 
                 text = "Wins: " + str(self.aliveplayers[0].wins)
                 textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)

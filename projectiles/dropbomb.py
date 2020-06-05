@@ -57,16 +57,14 @@ class dropbomb:
             self.velocity[i] += (sum([j[i] for j in forces]) / self.m) * dt
             self.pos[i] += 20.0 * self.velocity[i] * dt
 
-
         #if new pos is outside bounds delete
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion([self.pos[0], self.terrain.heightmap[int(self.pos[0])]], self.terrain, self.entities, self.player, 14, 0.4, 0.3, 0.8)
+                explosion([self.pos[0], self.terrain.heightmap[int(self.pos[0])]], self.terrain, self.entities, self.player, 15, 0.4, 0.3, 0.8)
                 self.delete = True
         else:
             self.delete = True
-
 
     def _forcedrag(self):
         dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()

@@ -95,8 +95,6 @@ class explosion:
         for i in rangex:
             self._sort(self.terrain.bitmap[i])
 
-
-
         self.terrain.updateSurface(rangex)
 
     def _sort(self, bitmap):
@@ -117,6 +115,6 @@ class explosion:
 
         for i in range(deleterange[0], self.terrain.bounds[1]-1):
             if bitmap[i]:
-                for j in range(i - length, i):
+                for j in range(i - length + 1, i):
                     bitmap[j] = True
                 return

@@ -74,7 +74,8 @@ class bouncybomb:
 
                     steps = 5
                     for i in np.arange(steps+1):
-                        vec = opposite * (i/float(steps))
+                        #go back in a certain number of steps
+                        vec = opposite * (i/float(steps)) * 20.0 * dt
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 
                         if newpos[1] < self.terrain.heightmap[int(newpos[0])]:
