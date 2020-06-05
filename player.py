@@ -62,7 +62,7 @@ class player:
         self.fullpowershottime = 1.1  # time to charge full power shot in seconds
 
         # player name font
-        self.font = pygame.font.SysFont('Arial', 10)
+        self.font = pygame.font.SysFont('Calibri', 10)
 
         #turret
         self.turretVector = Vector2d(0.0, -1.0)
@@ -99,6 +99,9 @@ class player:
         self.delete = False
         self.controlActive = False
         self.destroyed = False
+
+        #inventory
+        self.inventory = player._defaultinventory.copy()
         return
 
     def respawn(self, xpos):
@@ -176,11 +179,12 @@ class player:
 
             #draw
             screen.blit(self.rotatedbody, (self.pos[0] - self.rotatedbody.get_width() / 2.0, self.pos[1] - self.rotatedbody.get_height() / 2.0))
-        #draw text and health bar
-        if not self.destroyed:
-            pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
-            pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
-            screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
+
+            #draw text and health bar
+            if not self.destroyed:
+                pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
+                pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
+                screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
         return
 
     #this method gets called when the players is moved, or when explosion happens, so it falls on ground

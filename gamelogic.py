@@ -47,9 +47,9 @@ class scorchedearth:
         self.wind = windforce(self.maxwind)
 
         #initilize fonts
-        self.font = pygame.font.SysFont('Arial', 20)
-        self.winnersubfont = pygame.font.SysFont('Arial', 25)
-        self.winnerfont = pygame.font.SysFont('Arial', 50)
+        self.font = pygame.font.SysFont('Calibri', 20)
+        self.winnersubfont = pygame.font.SysFont('Calibri', 25)
+        self.winnerfont = pygame.font.SysFont('Calibri', 50)
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
@@ -219,7 +219,7 @@ class scorchedearth:
     def _drawText(self, screen):
         if self.gamestate == self.gamestates["round"]:
             #draw remaining time
-            text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1))
+            text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1)) + "  -  " + str(self.shotlimit - self.currentplayer.shotcounter)
             textsurface = self.font.render(text, False, self.currentplayer.color)
             screen.blit(textsurface, (50, 50))
 
@@ -241,6 +241,16 @@ class scorchedearth:
                 time = self.elapsedtime - self.currentplayer.shootingstarttime
             else:
                 time = 0.0
+
+            #draw currently equipped weapon name
+            amount = self.currentplayer.inventory.getcurrentamount()
+            if amount < 0:
+                text = self.currentplayer.inventory.getcurrentitem()._name + "  -  " + "∞"
+            else:
+                text = self.currentplayer.inventory.getcurrentitem()._name + "  -  " + str(amount)
+
+            textsurface = self.font.render(text, False, self.currentplayer.color)
+            screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, 50))
 
             pygame.draw.rect(screen, self.currentplayer.color, ((0, 0), (self.screensize[0] * min(max(time/self.currentplayer.fullpowershottime, self.currentplayer.minshotpower), 1.0), 5)))
             return

@@ -84,7 +84,7 @@ class missile:
 
 
     def _forcedrag(self):
-        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.length() ** 2
+        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()
         return self.velocity.getuvec() * dragtotal
 
     # calculates the force of gravity in x and y direction

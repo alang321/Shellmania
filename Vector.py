@@ -33,6 +33,10 @@ class Vector2d:
     def length(self):
         return (self.x**2 + self.y**2)**0.5
 
+    #skips taking the root, faster for cases where you need the square anyway
+    def lengthsquared(self):
+        return self.x**2 + self.y**2
+
     @staticmethod
     def dotprod(vec1, vec2):
         return vec1.x * vec2.x + vec1.y * vec2.y

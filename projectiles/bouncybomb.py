@@ -21,7 +21,7 @@ class bouncybomb:
         self.velocity = velocity * dir
         self.pos = pos
 
-        self.maxbounces = 1
+        self.maxbounces = 2
         self.bounces = 0
         self.coeffrest = 0.6
 
@@ -67,12 +67,14 @@ class bouncybomb:
                 self.bounces += 1
                 if self.bounces <= self.maxbounces:
 
-                    normal = self.terrain.normalmap[int(self.pos[0])]
+                    #vector in the opposite direction of the curren velocity
+                    opposite = -1 * self.velocity
 
                     newposset = False
 
-                    for i in np.arange(0, 9, 0.3):
-                        vec = normal * i
+                    steps = 5
+                    for i in np.arange(steps+1):
+                        vec = opposite * (i/float(steps))
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 
                         if newpos[1] < self.terrain.heightmap[int(newpos[0])]:
@@ -93,7 +95,7 @@ class bouncybomb:
 
 
     def _forcedrag(self):
-        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.length() ** 2
+        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()
         return self.velocity.getuvec() * dragtotal
 
     # calculates the force of gravity in x and y direction

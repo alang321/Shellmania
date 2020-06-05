@@ -7,7 +7,7 @@ import random
 
 class explosion:
 
-    def __init__(self, pos, terrain, entities, player, r=10.0, damage=0.8, maxdropoff = 0.5):
+    def __init__(self, pos, terrain, entities, player, r=10.0, damage=0.8, maxdropoff=0.5, particlescaling=1.2):
         #references
         self.playerlist = entities[0]
         self.particlelist = entities[2]
@@ -29,7 +29,7 @@ class explosion:
         self.blastradiussquared = self.blastradius**2
 
         #spawn explosion particles
-        self._explosionparticles()
+        self._explosionparticles(particlescaling)
 
         #calculate which players where hit andd for how much damage
         self._playerhits()
@@ -40,7 +40,7 @@ class explosion:
         self._setplayersonground()
         return
 
-    def _explosionparticles(self):
+    def _explosionparticles(self, particlescaling):
         dirt = pygame.Surface([4, 4])
         dirt.fill((0, 0, 0))
         dirt.set_colorkey((0, 0, 0))
@@ -49,7 +49,7 @@ class explosion:
 
         normalvec = self.terrain.normalmap[int(self.pos[0])]
         surfacevec = self.terrain.normalmap[int(self.pos[0])].getnormalvec()
-        for i in range(int(self.blastradius * 1.2)):
+        for i in range(int(self.blastradius * particlescaling)):
             direction = (normalvec * (random.randint(-50, 400)/10.0) + (random.randint(-80, 80)/10.0) * surfacevec).getuvec()
             velocity = random.randint(0, 1100)/100.0
             bouncyparticle(self.pos.copy(), self.terrain, dirt, 3.0, direction, velocity, self.particlelist, True, 2.0, None, 1000, 0.3)

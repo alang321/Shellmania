@@ -23,7 +23,7 @@ class airstrike:
         #whether or not the missile has impacted the ground
         self.impacted = False
         #how long the projectile is alive after impact
-        self.maxtimealive = 3.0
+        self.maxtimealive = 2.5
         self.alivetimer = 0.0
         self.bombdelay = 2.0
         self.bombsdeployed = False
@@ -97,7 +97,7 @@ class airstrike:
 
 
     def _forcedrag(self):
-        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.length() ** 2
+        dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()
         return self.velocity.getuvec() * dragtotal
 
     # calculates the force of gravity in x and y direction
