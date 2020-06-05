@@ -139,4 +139,4 @@ class playerinventory:
     def pickupparticle(self, item, amount):
         text = "+" + str(amount) + " " + item._name
         textsurface = self.owner.font.render(text, False, self.owner.color)
-        particle([self.owner.pos[0], self.owner.pos[1] - 60], textsurface, 3, Vector2d(0.0, -1.0), 0.7, 0.19, self.owner.entities[2], True, 0.0, None, 8.0)
+        particle([self.owner.pos[0], self.owner.pos[1] - 50], textsurface, 3, Vector2d(0.0, -1.0), 0.7, 0.19, self.owner.entities[2], True, 0.0, None, 8.0)

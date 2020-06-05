@@ -59,7 +59,7 @@ class nuke:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion(self.pos, self.terrain, self.entities, self.player, 70, 1, 0.4)
+                explosion(self.pos, self.terrain, self.entities, self.player, 60, 1, 0.4)
 
                 flash = pygame.Surface([self.terrain.bounds[0], self.terrain.bounds[1]])
                 flash.fill(pygame.color.THECOLORS["white"])

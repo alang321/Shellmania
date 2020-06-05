@@ -12,7 +12,7 @@ from playerinventory import playerinventory
 
 
 class player:
-    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, 2, 1, 2], 0)
+    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile, nuke], [-1, 2, 1, 2, -1], 0)
 
     weapon = bouncybomb
 
@@ -28,7 +28,7 @@ class player:
     height = 40.0
 
     key_fire = pygame.K_SPACE
-    key_left = pygame.K_a
+    key_left = 97
     key_right = pygame.K_d
     key_previous = pygame.K_q
     key_next = pygame.K_e

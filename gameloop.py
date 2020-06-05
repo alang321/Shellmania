@@ -14,13 +14,15 @@ class gameloop:
     lengthofturn = 25.0    #length of turn per player
     shotlimit = 1  # max shots per round per player
 
-    quitbutton = pygame.K_ESCAPE # quit button
-    continuebutton = pygame.K_RETURN # continue button
+    path = "./settings.txt"
 
     def __init__(self, screensize, playernames, fullscreen=False):
         #initialize pygame
         pygame.init()
         pygame.font.init()
+
+        #settingsfile
+        self.settings =
 
         #screen
         self.screensize = screensize
@@ -28,6 +30,7 @@ class gameloop:
             self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode(self.screensize)
+
 
         # background
         self.background = background(self.screensize, (19, 19, 39, 255))
