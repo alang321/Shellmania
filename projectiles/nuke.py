@@ -2,9 +2,12 @@ import pygame
 from Vector import Vector2d
 from explosion import explosion
 from particles import particle
+import numpy as np
 
 
-class dropbomb:
+class nuke:
+    _name = "Nuke"
+
     width = 6
     height = 20
 
@@ -15,8 +18,8 @@ class dropbomb:
 
     def __init__(self, pos, dir, velocity, terrain, wind, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
         #vel pos
-        self.pos = pos
         self.velocity = velocity * dir
+        self.pos = pos
 
         #references
         self.terrain = terrain
@@ -25,22 +28,27 @@ class dropbomb:
         self.delete = False
         #player that fired the missile
         self.player = player
+        self.wind = wind
 
         self.m = m
 
         self.color = color
-        #main sprite
+
+        self.color = color
+        # main sprite
         self.sprite = pygame.Surface([self.width, self.height], pygame.SRCALPHA)
         self.rect = self.sprite.get_rect()
         pygame.draw.ellipse(self.sprite, self.color, ((0, 3), (self.width, self.height)))
         pygame.draw.rect(self.sprite, self.color, ((0, 0), (self.width, 4)))
 
     def draw(self, screen):
-        screen.blit(self.sprite, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h/2])
+        #rotate the sprite in the direcction of the velocity vector
+        rotated = pygame.transform.rotate(self.sprite, np.rad2deg(self.velocity.find360CCWAngle(Vector2d(0.0, 1.0))))
+        screen.blit(rotated, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h / 2])
 
     def update(self, dt):
         #this list holds all the forces acting on the missile
-        forces = [self._forcedrag(), self._forcegravity()]
+        forces = [self._forcedrag(), self._forcegravity(), self.wind.force]
 
         #update position and velocity depeneing on the timestep
         for i in range(2):
@@ -51,10 +59,16 @@ class dropbomb:
         if 0 < self.pos[0] < self.terrain.bounds[0] - 1.0:
             #if new pos is under ground explode
             if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
-                explosion([self.pos[0], self.terrain.heightmap[int(self.pos[0])]], self.terrain, self.entities, self.player, 15, 0.4, 0.3, 0.8)
+                explosion(self.pos, self.terrain, self.entities, self.player, 70, 1, 0.4)
+
+                flash = pygame.Surface([self.terrain.bounds[0], self.terrain.bounds[1]])
+                flash.fill(pygame.color.THECOLORS["white"])
+                particle([flash.get_rect().w/2, flash.get_rect().h/2], flash, 2.5, Vector2d(0, 0), 0, 0.0, self.entities[2], True, 0.3)
+
                 self.delete = True
         else:
             self.delete = True
+
 
     def _forcedrag(self):
         dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()

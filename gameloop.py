@@ -5,13 +5,13 @@ from terrain import terrain
 import random
 from wind import windforce
 
-class scorchedearth:
+class gameloop:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["purple"], pygame.color.THECOLORS["green"]]
     _groundcolors = [(193, 68, 14, 255), (35, 141, 35, 255), (143, 143, 143, 255)]
 
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
-    lengthofturn = 15.0    #length of turn per player
+    lengthofturn = 25.0    #length of turn per player
     shotlimit = 1  # max shots per round per player
 
     quitbutton = pygame.K_ESCAPE # quit button
@@ -55,9 +55,9 @@ class scorchedearth:
         self.gameTerrain = terrain(self.screensize)
 
         #create player objects with random colors
-        random.shuffle(scorchedearth._playercolors)
+        random.shuffle(gameloop._playercolors)
         for i in range(len(playernames)):
-            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, scorchedearth._playercolors[i % len(self._playercolors)])
+            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, gameloop._playercolors[i % len(self._playercolors)])
 
         #reset all variables
         self.restart()
@@ -70,7 +70,7 @@ class scorchedearth:
     def restart(self):
 
         #regenerate the terrain
-        self.gameTerrain.groundcolor = random.choice(scorchedearth._groundcolors)[:-1]
+        self.gameTerrain.groundcolor = random.choice(gameloop._groundcolors)[:-1]
         self.gameTerrain.generateTerrain()
 
         #random spawn order

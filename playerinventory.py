@@ -1,8 +1,9 @@
-
+from particles import particle
+from Vector import Vector2d
 
 class playerinventory:
 
-    def __init__(self, items, amounts, default=0):
+    def __init__(self, items, amounts, default=0, owner=None):
         if len(amounts) != len(items):
             raise Exception("amounts is not same length as items. Lenght amounts: ", len(amounts), ", Lenght items: ", len(items))
         if not default < len(amounts) or default < 0:
@@ -17,6 +18,8 @@ class playerinventory:
         self.items = items
         #amount -1 is infinity
         self.amounts = amounts
+
+        self.owner = owner
 
     #returns true if non zero item found, false if not
     def nextnonzero(self):
@@ -90,8 +93,9 @@ class playerinventory:
             index = self.items.index(item)
             if self.amounts[index] >= 0:
                 self.amounts[index] += amount
+            self.pickupparticle(item, amount)
         else:
-            raise Exception("item not in inventory")
+            self.newitem(item, amount)
 
     #set the amount of a given item
     def setitemamount(self, item, amount):
@@ -108,6 +112,9 @@ class playerinventory:
         else:
             self.items.append(item)
             self.amounts.append(amount)
+            self.slots += 1
+            self.pickupparticle(item, amount)
+
 
     #set current index to index of item passed, raises exception if item is not in inventpry
     def settoitem(self, item):
@@ -127,3 +134,9 @@ class playerinventory:
     #returns a copy of the inventory
     def copy(self):
         return playerinventory(self.items.copy(), self.amounts.copy(), self.default)
+
+    # pickup particle, text that gets displayed above the player
+    def pickupparticle(self, item, amount):
+        text = "+" + str(amount) + " " + item._name
+        textsurface = self.owner.font.render(text, False, self.owner.color)
+        particle([self.owner.pos[0], self.owner.pos[1] - 60], textsurface, 3, Vector2d(0.0, -1.0), 0.7, 0.19, self.owner.entities[2], True, 0.0, None, 8.0)

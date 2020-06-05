@@ -4,6 +4,7 @@ from projectiles.bouncybomb import bouncybomb
 from projectiles.missile import missile
 from projectiles.airstrike import airstrike
 from projectiles.teleportermissile import teleportermissile
+from projectiles.nuke import nuke
 from Vector import Vector2d
 import random
 from particles import particle
@@ -118,6 +119,7 @@ class player:
 
         #inventory
         self.inventory = player._defaultinventory.copy()
+        self.inventory.owner = self
 
         #set tank on ground and update turret vector
         self.setonground()
@@ -248,6 +250,7 @@ class player:
                 self.controlActive = False
                 self.aliveplayers.remove(self)
                 if player != self:
+                    player.inventory.addtoitemamount(nuke, 1)
                     player.kills += 1
             return
 

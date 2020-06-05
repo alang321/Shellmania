@@ -90,7 +90,6 @@ class airstrike:
                     distance = 27
                     for i in range(-2, 3):
                         dropbomb([self.pos[0] + i * distance, -20], Vector2d(0.0, 1.0), random.randint(20, 27), self.terrain, self.wind, self.entities, self.player, 10.0, self.color)
-
             else:
                 self.delete = True
 
