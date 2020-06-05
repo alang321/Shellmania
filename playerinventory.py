@@ -11,7 +11,8 @@ class playerinventory:
             raise Exception("item list length cant be 0")
 
         self.slots = len(amounts)
-        self.index = default
+        self.default = default
+        self.index = self.default
         #holds the classes of the items in the inventory
         self.items = items
         #amount -1 is infinity
@@ -96,5 +97,6 @@ class playerinventory:
         else:
             raise Exception("item not in inventory")
 
+    #returns a copy of the inventory
     def copy(self):
-        #todo implement this function
+        return playerinventory(self.items.copy(), self.amounts.copy(), self.default)

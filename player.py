@@ -11,6 +11,8 @@ from playerinventory import playerinventory
 
 
 class player:
+    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, -1, -1, -1], 0)
+
     weapon = bouncybomb
 
     #drawing
@@ -44,9 +46,6 @@ class player:
         self.name = name
         #helath from 0 to 1
         self.health = 1.0
-
-        # TODO : default inventory that gets reset each respawn
-        self.inventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, -1, -1, -1], 0)
 
         #counters
         self.shotcounter = 0
@@ -113,6 +112,9 @@ class player:
         self.shotcharging = False
         self.destroyed = False
         self.shotcounter = 0
+
+        #inventory
+        self.inventory = player._defaultinventory.copy()
 
         #set tank on ground and update turret vector
         self.setonground()
