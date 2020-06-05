@@ -15,8 +15,8 @@ class dropbomb:
 
     def __init__(self, pos, dir, velocity, terrain, wind, entities, player, m=1.0, color=pygame.color.THECOLORS["red"]):
         #vel pos
-        self.velocity = velocity * dir
         self.pos = pos
+        self.velocity = velocity * dir
 
         #references
         self.terrain = terrain
@@ -35,7 +35,6 @@ class dropbomb:
         pygame.draw.ellipse(self.sprite, self.color, ((0, 3), (self.width, self.height)))
         pygame.draw.rect(self.sprite, self.color, ((0, 0), (self.width, 4)))
 
-
         #trail particle
         self.trailcounter = 0
         self.traillength = 5
@@ -43,7 +42,6 @@ class dropbomb:
         self.trailinterval = 0.001
         self.timesincetrail = self.trailinterval
         self.currentindex = self.traillength-1
-        return
 
     def draw(self, screen):
         screen.blit(self.sprite, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h/2])

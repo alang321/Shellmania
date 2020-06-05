@@ -94,8 +94,6 @@ class airstrike:
             else:
                 self.delete = True
 
-
-
     def _forcedrag(self):
         dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()
         return self.velocity.getuvec() * dragtotal
