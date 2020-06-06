@@ -27,12 +27,6 @@ class player:
     width = 25.0
     height = 40.0
 
-    key_fire = pygame.K_SPACE
-    key_left = 97
-    key_right = pygame.K_d
-    key_previous = pygame.K_q
-    key_next = pygame.K_e
-
     smokeinterval = 0.1
 
     def __init__(self, name, terrain, wind, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):

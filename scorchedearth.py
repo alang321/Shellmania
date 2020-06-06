@@ -16,8 +16,6 @@ screenSize = [1200, 800]
 
 a = int(input("Number players:"))
 
-gamesettings("./settings.txt")
-
 for i in range(0, a):
     playernames.append(input("Enter player name:"))
 

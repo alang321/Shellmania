@@ -4,6 +4,7 @@ from background import background
 from terrain import terrain
 import random
 from wind import windforce
+from settings import gamesettings
 
 class gameloop:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["purple"], pygame.color.THECOLORS["green"]]
@@ -11,10 +12,7 @@ class gameloop:
 
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
-    lengthofturn = 25.0    #length of turn per player
-    shotlimit = 1  # max shots per round per player
-
-    path = "./settings.txt"
+    settingspath = "./settings.txt"
 
     def __init__(self, screensize, playernames, fullscreen=False):
         #initialize pygame
@@ -22,15 +20,14 @@ class gameloop:
         pygame.font.init()
 
         #settingsfile
-        self.settings =
+        self.settings = gamesettings(self.settingspath)
 
         #screen
-        self.screensize = screensize
-        if fullscreen:
+        self.screensize = self.settings.gamevalues["Resolution"]
+        if self.settings.gamevalues["Fullscreen"]:
             self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode(self.screensize)
-
 
         # background
         self.background = background(self.screensize, (19, 19, 39, 255))
@@ -47,7 +44,11 @@ class gameloop:
 
         #wind
         self.maxwind = 3.0
-        self.wind = windforce(self.maxwind)
+        self.wind = windforce(self.settings.gamevalues["Wind strength"])
+
+        #turn length limits
+        self.lengthofturn = self.settings.gamevalues["Turn length"]    #length of turn per player
+        self.shotlimit = self.settings.gamevalues["Shot limit"]   # max shots per round per player
 
         #initilize fonts
         self.font = pygame.font.SysFont('Calibri', 20)
@@ -140,25 +141,25 @@ class gameloop:
         for event in eventlist:
             if event.type == pygame.QUIT:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == self.quitbutton:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == self.continuebutton:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
                 if self.gamestate != self.gamestates["round"]:
                     self.restart()
-            elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.currentplayer.key_fire: # start shot
+            elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.settings.playerkeys["Fire"]: # start shot
                 if self.currentplayer.shotcounter < self.shotlimit:
                     self.currentplayer.firekeyevent(event.type, self.elapsedtime)
-            elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_left:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Left"]:
                 self.currentplayer.left = True
-            elif event.type == pygame.KEYDOWN and event.key == self.currentplayer.key_right:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Right"]:
                 self.currentplayer.right = True
-            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_left:
+            elif event.type == pygame.KEYUP and event.key == self.settings.playerkeys["Left"]:
                 self.currentplayer.left = False
-            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_right:
+            elif event.type == pygame.KEYUP and event.key == self.settings.playerkeys["Right"]:
                 self.currentplayer.right = False
-            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_next:
+            elif event.type == pygame.KEYUP and event.key == self.settings.playerkeys["Next"]:
                 self.currentplayer.nextitem()
-            elif event.type == pygame.KEYUP and event.key == self.currentplayer.key_previous:
+            elif event.type == pygame.KEYUP and event.key == self.settings.playerkeys["Previous"]:
                 self.currentplayer.previousitem()
             pass
         return True
