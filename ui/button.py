@@ -1,7 +1,7 @@
 import pygame
 
 class button:
-    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, active=True, textcolor=pygame.color.THECOLORS["white"]):
+    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, active=True, textcolor=pygame.color.THECOLORS["black"]):
         #Button text
         self.text = text
         self.textsurface = font.render(text, True, textcolor)

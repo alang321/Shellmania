@@ -4,6 +4,8 @@ from ui.button import button
 class settingsscene:
     nextscene = None
 
+    # TODO: implement this class, probably settings tabs
+
     def __init__(self, screen, background, settings):
         self.arguments = []
         self.screen = screen

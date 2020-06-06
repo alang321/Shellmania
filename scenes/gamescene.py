@@ -89,8 +89,8 @@ class gamescene:
 
         self.gamestate = self.gamestates["round"]
 
-        #timer for how long current turn is
-        self.currentturnstart = 0.0
+        #timer for when the current turn started
+        self.currentturnstart = 0.001 * pygame.time.get_ticks()
 
         #random player starts
         self.currentindex = random.randint(0, len(self.playernames)-1)

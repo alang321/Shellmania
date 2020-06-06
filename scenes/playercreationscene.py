@@ -13,8 +13,10 @@ class playercreationscene:
         self.running = True
         self.screensize = settings.gamevalues["Resolution"]
 
-        self.font = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]/24), 12))
-        self.textboxfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]/30), 12))
+        self.font = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.042), 12))
+
+        self.startfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.1), 12))
+        self.textboxfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.033), 12))
 
 
         self.background = background
@@ -34,21 +36,36 @@ class playercreationscene:
         self.textboxbordercolor = settings.design["Textbox border color"]
 
         # ui element height and width
-        self.uiheight = self.screensize[1]/18
-        self.uiwidth = self.screensize[0]/4.3
-
-        #textbox height
-        self.textboxheight = self.screensize[1]/20
-        self.textboxwidth = self.uiwidth
-        self.textboxmargin = self.screensize[0]/30
-        self.textboxxpos = self.screensize[0] * 0.8
-        self.textboxypos = self.screensize[1] * 0.1
-
-        self.backkey = settings.gamekeys["Quit"]
+        self.uiheight = self.screensize[1]*0.059
+        self.uiwidth = self.screensize[0]*0.3
 
         #playerlimits
         self.maxplayers = 8
         self.minplayers = 2
+
+        #textbox height
+        self.textlistheight = self.screensize[1] * 0.8
+        self.textboxxpos = self.screensize[0] * 0.75
+        self.textboxypos = self.screensize[1] * 0.1
+        self.textboxheight = self.screensize[1]*0.05
+        self.textboxwidth = self.uiwidth
+        self.textboxmargin = (self.textlistheight-self.textboxheight*self.maxplayers)/(self.maxplayers-1)
+
+        self.backkey = settings.gamekeys["Quit"]
+
+        #0.75 is textbox
+
+        #buttons sizes and positions
+        self.startxpos = self.screensize[0]*0.6*0.5
+        self.startwidth = self.screensize[0]*0.6*0.7
+        self.startheight = self.uiheight*3
+        self.buttonmargins = self.uiheight * 0.2
+        self.buttonwidth = self.startwidth * 0.5 - self.buttonmargins*0.5
+        self.addxpos = self.startxpos - self.buttonmargins * 0.5 - self.buttonwidth * 0.5
+        self.removexpos = self.startxpos + self.buttonmargins * 0.5 + self.buttonwidth * 0.5
+        self.startypos = self.screensize[1]*0.5 - (self.startheight+self.buttonmargins+self.uiheight)*0.5 + self.startheight * 0.5
+        self.buttonypos = self.screensize[1]*0.5 + (self.startheight+self.buttonmargins+self.uiheight)*0.5 - self.uiheight * 0.5
+
 
         self._addtextbox(self.minplayers)
         self._createbuttons()
@@ -57,17 +74,17 @@ class playercreationscene:
 
     # creates buttons
     def _createbuttons(self):
-        self.addplayerbutton = button("Add", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], self.uiwidth, self.uiheight,
+        self.addplayerbutton = button("Add", self.font, [self.addxpos, self.buttonypos], self.buttonwidth, self.uiheight,
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._addplayer)
         self.buttonlist.append(self.addplayerbutton)
 
-        self.removeplayerbutton = button("Remove", self.font, [self.screensize[0] / 2, self.screensize[1] / 2+70], self.uiwidth, self.uiheight,
+        self.removeplayerbutton = button("Remove", self.font, [self.removexpos, self.buttonypos], self.buttonwidth, self.uiheight,
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._removeplayer)
         self.buttonlist.append(self.removeplayerbutton)
 
-        startbutton = button("Start", self.font, [self.screensize[0] / 2- 500, self.screensize[1] / 2+70], self.uiwidth, self.uiheight,
+        startbutton = button("Start", self.startfont, [self.startxpos, self.startypos], self.startwidth, self.startheight,
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._start)
         self.buttonlist.append(startbutton)
@@ -83,7 +100,11 @@ class playercreationscene:
                 ypos = self.textboxypos
             else:
                 ypos = self.textboxlist[-1].pos[1]+self.textboxmargin+self.textboxheight
-            nametextbox = textbox(True, "", self.textboxfont, [self.textboxxpos, ypos], self.textboxwidth, self.textboxheight, self.textboxbordercolor, self.textboxactivecolor, self.inactivecolor, None, None)
+                #deactivate previous textbox
+                self.textboxlist[-1].hasfocus = False
+
+            nametextbox = textbox(True, "", self.textboxfont, [self.textboxxpos, ypos], self.textboxwidth, self.textboxheight, self.textboxbordercolor, self.textboxactivecolor, self.textboxinactivecolor, None, None)
+            nametextbox.rendertext("Enter player name...")
             self.textboxlist.append(nametextbox)
 
 
