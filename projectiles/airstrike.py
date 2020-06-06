@@ -95,7 +95,7 @@ class airstrike:
 
     def _forcedrag(self):
         dragtotal = self.Cd * self.S * 0.5 * self.rho * self.velocity.lengthsquared()
-        return self.velocity.getuvec() * dragtotal
+        return -1 * self.velocity.getuvec() * dragtotal
 
     # calculates the force of gravity in x and y direction
     def _forcegravity(self):
