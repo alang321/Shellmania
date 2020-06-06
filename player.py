@@ -58,7 +58,7 @@ class player:
         self.fullpowershottime = 1.1  # time to charge full power shot in seconds
 
         # player name font
-        self.font = pygame.font.SysFont('Calibri', 10)
+        self.font = pygame.font.SysFont('Calibri', 11)
 
         #turret
         self.turretVector = Vector2d(0.0, -1.0)

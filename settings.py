@@ -7,14 +7,17 @@ class gamesettings:
     _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE}
     _gamekeys = {'Quit':pygame.K_ESCAPE, 'Newround':pygame.K_RETURN}
     _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1}
-    _design = {'Button color':list(pygame.color.THECOLORS["blue"]), 'Button hover color':list(pygame.color.THECOLORS["white"]), 'Button pressed color':list(pygame.color.THECOLORS["black"]), 'Button inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Font type':'Calibri'}
+    _design = {'Button color':list(pygame.color.THECOLORS["blue"]), 'Button hover color':list(pygame.color.THECOLORS["white"]), 'Button pressed color':list(pygame.color.THECOLORS["black"]), 'Button inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Title color':list(pygame.color.THECOLORS["white"]), 'Font type':'Calibri'}
+    _misc = {'Game title': "Tiny Tank"}
 
-    _sections = {'playerkeys': 0, 'gamekeys': 1, 'values': 2, 'design':3}
+
+    _sections = {'playerkeys': 0, 'gamekeys': 1, 'values': 2, 'design':3, 'misc':4}
 
     _values = [_playerkeys,
                _gamekeys,
                _gamevalues,
-               _design]
+               _design,
+               _misc]
 
     #seperator for save lines
     _seperator = ':'
@@ -33,6 +36,7 @@ class gamesettings:
         self.gamekeys = self.values[1]
         self.gamevalues = self.values[2]
         self.design = self.values[3]
+        self.misc = self.values[4]
 
     #resets the savefile with default values
     def reset(self):

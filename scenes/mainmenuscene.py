@@ -14,7 +14,7 @@ class mainmenuscene:
 
         self.screensize = settings.gamevalues["Resolution"]
 
-        self.buttonfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]/24), 12))
+        self.buttonfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.042), 12))
 
         self.background = background
 
@@ -26,15 +26,21 @@ class mainmenuscene:
         self.pressedcolor = settings.design["Button pressed color"]
         self.inactivecolor = settings.design["Button inactive color"]
 
+        #gamename
+        self.titlefont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.2), 30))
+        self.titletext = self.titlefont.render(settings.misc["Game title"], True, settings.design["Title color"])
+        self.titlepos = [self.screensize[0]/2-self.titletext.get_rect().w/2, self.screensize[1]*0.285-self.titletext.get_rect().h/2]
+
+
         self._createbuttons()
         self._startloop()
         return
 
     def _createbuttons(self):
-        offsetcenter = self.screensize[1]/14
-        marginbetween = 20
-        height = self.screensize[1]/17
-        width = self.screensize[0]/4.3
+        offsetcenter = self.screensize[1]*0.07
+        height = self.screensize[1]*0.059
+        width = self.screensize[0]*0.3
+        marginbetween = height * 0.2
 
         startbutton = button("Start", self.buttonfont, [self.screensize[0]/2, self.screensize[1]/2+offsetcenter], width, height,
                                 self.buttoncolor, self.hovercolor,
@@ -76,6 +82,7 @@ class mainmenuscene:
                 #draw
                 self.background.draw(self.screen)
                 self._drawbuttons()
+                self.screen.blit(self.titletext, self.titlepos)
 
                 #display screen surface
                 pygame.display.flip()
@@ -88,6 +95,6 @@ class mainmenuscene:
         self.nextscene = playercreationscene
         self.running = False
 
-    def _quit(self):
+    def _quit(self, object):
         pygame.quit()
         exit()

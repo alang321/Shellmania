@@ -38,7 +38,7 @@ class textbox:
         self.clicked = False
 
     def rendertext(self, text):
-        self.textsurface = self.font.render(text, False, self.textcolor)
+        self.textsurface = self.font.render(text, True, self.textcolor)
         self.textsurfacerect = self.textsurface.get_rect()
 
     #keydown event handler

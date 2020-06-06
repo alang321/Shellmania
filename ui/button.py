@@ -4,7 +4,7 @@ class button:
     def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, active=True, textcolor=pygame.color.THECOLORS["white"]):
         #Button text
         self.text = text
-        self.textsurface = font.render(text, False, textcolor)
+        self.textsurface = font.render(text, True, textcolor)
         self.textsurfacerect = self.textsurface.get_rect()
 
         #if button is active
