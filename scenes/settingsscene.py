@@ -1,73 +1,77 @@
-from scenes.mainmenuscene import mainmenuscene
+import pygame
+from ui.button import button
 
 class settingsscene:
-    nextscene = mainmenuscene
-    arguments = ()
+    nextscene = None
 
-    def __init__(self, screen, settings):
-        nextscene = settingsscene
-        arguments = []
+    def __init__(self, screen, background, settings):
+        self.arguments = []
+        self.screen = screen
 
-        def __init__(self, screen, settings):
-            self.screen = screen
+        self.running = True
 
-            self.running = True
+        self.font = pygame.font.SysFont(settings.design["Font type"], 30)
 
-            self.font = pygame.font.SysFont('Calibri', 30)
+        self.screensize = settings.gamevalues["Resolution"]
 
-            self.screensize = settings.gamevalues["Resolution"]
+        self.background = background
 
-            self.buttonlist = []
+        self.buttonlist = []
 
-            self.background = background(self.screensize, (19, 19, 39, 255))
+        # ui element height and width
+        self.uiheight = self.screensize[1]/18
+        self.uiwidth = self.screensize[0]/4.3
 
-            self._createbuttons()
-            self._startloop()
-            return
+        #button colors
+        self.buttoncolor = settings.design["Button color"]
+        self.hovercolor = settings.design["Button hover color"]
+        self.pressedcolor = settings.design["Button pressed color"]
+        self.inactivecolor = settings.design["Button inactive color"]
 
-        def _createbuttons(self):
-            settingsbutton = button("Settings", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], 300, 60,
-                                    pygame.color.THECOLORS["red"], pygame.color.THECOLORS["orange"],
-                                    pygame.color.THECOLORS["yellow"], self._switchtosettings)
-            self.buttonlist.append(settingsbutton)
+        self.backkey = settings.gamekeys["Quit"]
 
-        def _drawbuttons(self):
-            for i in self.buttonlist:
-                i.update()
-                i.draw(self.screen)
+        self._createbuttons()
+        self._startloop()
+        return
 
-        def _startloop(self):
-            t0 = 0.001 * pygame.time.get_ticks()
-            maxdt = 0.5
+    def _createbuttons(self):
+        settingsbutton = button("Back", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], self.uiwidth, self.uiheight,
+                                self.buttoncolor, self.hovercolor,
+                                self.pressedcolor, self.inactivecolor, self._goback)
+        self.buttonlist.append(settingsbutton)
 
-            while self.running:
-                t = 0.001 * pygame.time.get_ticks()
-                dt = min(t - t0, maxdt)
-                if dt > 0.:
-                    t0 = t
+    def _drawbuttons(self):
+        for i in self.buttonlist:
+            i.update()
+            i.draw(self.screen)
 
-                    # event handling
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            self._exitpressed()
-                        pass
+    def _startloop(self):
+        t0 = 0.001 * pygame.time.get_ticks()
+        maxdt = 0.5
 
-                    # draw
-                    self.background.draw(self.screen)
-                    self._drawbuttons()
+        while self.running:
+            t = 0.001 * pygame.time.get_ticks()
+            dt = min(t - t0, maxdt)
+            if dt > 0.:
+                t0 = t
 
-                    # display screen surface
-                    pygame.display.flip()
 
-        def _switchtosettings(self):
-            # todo: remove gamescene here
-            self.nextscene = settingsscene
-            self.running = False
+                # event handling
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    if event.type == pygame.KEYUP and event.key == self.backkey:
+                        self._goback(None)
+                    pass
 
-        def _switchtoplayercreation(self):
-            self.nextscene = playercreationscene
-            self.running = False
+                # draw
+                self.background.draw(self.screen)
+                self._drawbuttons()
 
-        def _exitpressed(self):
-            self.nextscene = None
-            self.running = False
+                # display screen surface
+                pygame.display.flip()
+
+    def _goback(self, object):
+        self.nextscene = None
+        self.running = False

@@ -1,6 +1,6 @@
 import pygame
 from player import player
-from background import background
+from background import background as generatebackground
 from terrain import terrain
 import random
 from wind import windforce
@@ -12,9 +12,9 @@ class gamescene:
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
     nextscene = None
-    arguments = ()
 
-    def __init__(self, screen, settings, playernames):
+    def __init__(self, screen, background, settings, playernames):
+        self.arguments = []
         #settingsfile
         self.settings = settings
 
@@ -23,7 +23,7 @@ class gamescene:
         self.screensize = self.settings.gamevalues["Resolution"]
 
         # background
-        self.background = background(self.screensize, (19, 19, 39, 255))
+        self.background = generatebackground(self.screensize, (19, 19, 39, 255))
 
         self.playernames = playernames
         #set name to Player x if empty
@@ -132,8 +132,8 @@ class gamescene:
     def _eventhandling(self, eventlist):
         for event in eventlist:
             if event.type == pygame.QUIT:
-                self.nextscene = None
-                return False
+                pygame.quit()
+                exit()
             elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
                 return False
             elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:

@@ -7,27 +7,32 @@ class gamesettings:
     _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE}
     _gamekeys = {'Quit':pygame.K_ESCAPE, 'Newround':pygame.K_RETURN}
     _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1}
+    _design = {'Button color':list(pygame.color.THECOLORS["blue"]), 'Button hover color':list(pygame.color.THECOLORS["white"]), 'Button pressed color':list(pygame.color.THECOLORS["black"]), 'Button inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':list(pygame.color.THECOLORS["grey"]), 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Font type':'Calibri'}
 
-    _sections = {'playerkeys': 0, 'gamekeys': 1, 'values': 2}
+    _sections = {'playerkeys': 0, 'gamekeys': 1, 'values': 2, 'design':3}
 
     _values = [_playerkeys,
                _gamekeys,
-               _gamevalues]
+               _gamevalues,
+               _design]
 
     #seperator for save lines
     _seperator = ':'
 
     #parse function dictionary, kind fo ugly but works
-    _parsefunctions = {'int': "_parseint", 'float': "_parsefloat", 'bool': "_parsebool", 'list': "_parselist"}
+    _parsefunctions = {'int': "_parseint", 'float': "_parsefloat", 'bool': "_parsebool", 'list': "_parselist", 'str':"_parsestring"}
 
     def __init__(self, path):
         self.path = path
+        # todo: remove reset
+        self.reset()
         self.values = self.readsettingsfromfile()
 
         #for easier access
         self.playerkeys = self.values[0]
         self.gamekeys = self.values[1]
         self.gamevalues = self.values[2]
+        self.design = self.values[3]
 
     #resets the savefile with default values
     def reset(self):
@@ -129,6 +134,10 @@ class gamesettings:
 
         list = [int(i) for i in values.split(", ")]
         return list
+
+    @staticmethod
+    def _parsestring(value):
+        return value
 
     @staticmethod
     #read text between to symbols

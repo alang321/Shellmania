@@ -8,7 +8,7 @@ class terrain:
 
     def __init__(self, bounds, groundcolor=pygame.color.THECOLORS["green"]):
         self.bounds = bounds
-        self.groundcolor = groundcolor[:-1]
+        self.groundcolor = (193, 68, 14)
         self.backgroundcolor = pygame.color.THECOLORS["black"][:-1]
 
         #create surface that can later be edited with a reference array terrain bitmap

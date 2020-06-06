@@ -1,11 +1,14 @@
 import pygame
 
 class button:
-    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, function, textcolor=pygame.color.THECOLORS["white"]):
+    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, active=True, textcolor=pygame.color.THECOLORS["white"]):
         #Button text
         self.text = text
         self.textsurface = font.render(text, False, textcolor)
         self.textsurfacerect = self.textsurface.get_rect()
+
+        #if button is active
+        self.active = active
 
         #button box
         self.pos = pos
@@ -16,6 +19,7 @@ class button:
         #colors
         self.hoveringcolor = hoveringcolor
         self.clickedcolor = clickedcolor
+        self.inactivecolor = inactivecolor
         self.color = color
 
         #function that is called when button is pressed
@@ -31,7 +35,7 @@ class button:
         click = pygame.mouse.get_pressed()
 
         #calls function if mousebutton is released
-        if self.rect.collidepoint(mousepos):
+        if self.rect.collidepoint(mousepos) and self.active:
             if not self.clicked:
                 self.hovering = True
 
@@ -39,7 +43,7 @@ class button:
                     self.clicked = True
             else:
                 if click[0] == 0:
-                    self.function()
+                    self.function(self)
                     self.clicked = False
         else:
             self.hovering = False
@@ -47,7 +51,9 @@ class button:
 
     def draw(self, screen):
         #switch color to current state color, clicked before hovering
-        if self.clicked:
+        if not self.active:
+            color = self.inactivecolor
+        elif self.clicked:
             color = self.clickedcolor
         elif self.hovering:
             color = self.hoveringcolor

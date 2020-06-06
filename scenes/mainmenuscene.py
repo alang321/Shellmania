@@ -1,33 +1,55 @@
 from scenes.settingsscene import settingsscene
 from scenes.playercreationscene import playercreationscene
 import pygame
-from button import button
-from background import background
+from ui.button import button
 
 class mainmenuscene:
     nextscene = settingsscene
-    arguments = []
 
-    def __init__(self, screen, settings):
+    def __init__(self, screen, background, settings):
+        self.arguments = []
         self.screen = screen
 
         self.running = True
 
-        self.font = pygame.font.SysFont('Calibri', 30)
-
         self.screensize = settings.gamevalues["Resolution"]
+
+        self.buttonfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]/24), 12))
+
+        self.background = background
 
         self.buttonlist = []
 
-        self.background = background(self.screensize, (19, 19, 39, 255))
+        #button colors
+        self.buttoncolor = settings.design["Button color"]
+        self.hovercolor = settings.design["Button hover color"]
+        self.pressedcolor = settings.design["Button pressed color"]
+        self.inactivecolor = settings.design["Button inactive color"]
 
         self._createbuttons()
         self._startloop()
         return
 
     def _createbuttons(self):
-        settingsbutton = button("Settings", self.font, [self.screensize[0]/2, self.screensize[1]/2], 300, 60, pygame.color.THECOLORS["red"], pygame.color.THECOLORS["orange"], pygame.color.THECOLORS["yellow"], self._switchtosettings)
+        offsetcenter = self.screensize[1]/14
+        marginbetween = 20
+        height = self.screensize[1]/17
+        width = self.screensize[0]/4.3
+
+        startbutton = button("Start", self.buttonfont, [self.screensize[0]/2, self.screensize[1]/2+offsetcenter], width, height,
+                                self.buttoncolor, self.hovercolor,
+                                self.pressedcolor, self.inactivecolor, self._switchtoplayercreation)
+        self.buttonlist.append(startbutton)
+
+        settingsbutton = button("Settings", self.buttonfont, [self.screensize[0] / 2, self.screensize[1] / 2+offsetcenter+height+marginbetween], width, height,
+                                self.buttoncolor, self.hovercolor,
+                                self.pressedcolor, self.inactivecolor, self._switchtosettings)
         self.buttonlist.append(settingsbutton)
+
+        quitbutton = button("Quit", self.buttonfont, [self.screensize[0] / 2, self.screensize[1] / 2+offsetcenter+2 * height+ 2*marginbetween], width, height,
+                                self.buttoncolor, self.hovercolor,
+                                self.pressedcolor, self.inactivecolor, self._quit)
+        self.buttonlist.append(quitbutton)
 
     def _drawbuttons(self):
         for i in self.buttonlist:
@@ -47,7 +69,8 @@ class mainmenuscene:
                 # event handling
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
-                        self._exitpressed()
+                        pygame.quit()
+                        exit()
                     pass
 
                 #draw
@@ -57,15 +80,14 @@ class mainmenuscene:
                 #display screen surface
                 pygame.display.flip()
 
-    def _switchtosettings(self):
-        # todo: remove gamescene here
+    def _switchtosettings(self, object):
         self.nextscene = settingsscene
         self.running = False
 
-    def _switchtoplayercreation(self):
+    def _switchtoplayercreation(self, object):
         self.nextscene = playercreationscene
         self.running = False
 
-    def _exitpressed(self):
-        self.nextscene = None
-        self.running = False
+    def _quit(self):
+        pygame.quit()
+        exit()

@@ -1,6 +1,7 @@
 import pygame
 from settings import gamesettings
 from scenes.mainmenuscene import mainmenuscene
+from background import background
 
 class main:
     #path for the settings
@@ -14,13 +15,21 @@ class main:
         pygame.font.init()
         pygame.mixer.init()
 
+        self.screensize = self.settings.gamevalues["Resolution"]
+
         # screen
         if self.settings.gamevalues["Fullscreen"]:
-            self.screen = pygame.display.set_mode(self.settings.gamevalues["Resolution"], pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
         else:
-            self.screen = pygame.display.set_mode(self.settings.gamevalues["Resolution"])
+            self.screen = pygame.display.set_mode(self.screensize)
 
-        self.currentscene = mainmenuscene
+        self.background = background(self.screensize, (19, 19, 39, 255), True)
+
+        self.defaultscene = mainmenuscene
+
+        self.currentscene = self.defaultscene
+
+
 
         self.sceneswitcher()
 
@@ -29,14 +38,15 @@ class main:
         running = True
 
         #extra arguments that can be passed
-        args = ()
+        args = []
 
         while running:
-            scene = self.currentscene(self.screen, self.settings, *args)
+            scene = self.currentscene(self.screen, self.background, self.settings, *args)
 
             #switch to next scene or quit if there is no next scene
             if scene.nextscene is None:
-                running = False
+                self.currentscene = self.defaultscene
+                args = []
             else:
                 self.currentscene = scene.nextscene
                 args = scene.arguments
