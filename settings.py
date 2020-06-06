@@ -1,5 +1,6 @@
 import pygame
-import os.path
+
+# todo: implement max turrent angle and default fuel and if reset every round fuel
 
 class gamesettings:
     #default values
@@ -40,7 +41,7 @@ class gamesettings:
     def _writesettingsfile(self, valuelist):
         textfile = open(self.path, "w+")
         for sectionkey in gamesettings._sections:
-            textfile.write(sectionkey+"\n")
+            textfile.write("["+sectionkey+"]\n")
             values = valuelist[gamesettings._sections[sectionkey]]
             for key in values:
                 textfile.write(key+gamesettings._seperator+str(type(values[key]))+str(values[key])+"\n")
@@ -67,7 +68,7 @@ class gamesettings:
                 dictionary = {}
                 values.append(dictionary)
 
-                if lines[counter].strip() != sectionkey:
+                if gamesettings._textbetweensymbols(lines[counter].strip(), '[', ']') != sectionkey:
                     raise Exception("sectionkey doesnt equal file sectionkey  ", sectionkey, " != ", lines[counter])
 
                 for refkey in gamesettings._values[gamesettings._sections[sectionkey]]:

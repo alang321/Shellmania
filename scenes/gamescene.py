@@ -4,30 +4,23 @@ from background import background
 from terrain import terrain
 import random
 from wind import windforce
-from settings import gamesettings
 
-class gameloop:
+class gamescene:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["purple"], pygame.color.THECOLORS["green"]]
     _groundcolors = [(193, 68, 14, 255), (35, 141, 35, 255), (143, 143, 143, 255)]
 
     gamestates = {"round": 0, "draw": 1, "win": 2}
 
-    settingspath = "./settings.txt"
+    nextscene = None
+    arguments = ()
 
-    def __init__(self, screensize, playernames, fullscreen=False):
-        #initialize pygame
-        pygame.init()
-        pygame.font.init()
-
+    def __init__(self, screen, settings, playernames):
         #settingsfile
-        self.settings = gamesettings(self.settingspath)
+        self.settings = settings
 
         #screen
+        self.screen = screen
         self.screensize = self.settings.gamevalues["Resolution"]
-        if self.settings.gamevalues["Fullscreen"]:
-            self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
-        else:
-            self.screen = pygame.display.set_mode(self.screensize)
 
         # background
         self.background = background(self.screensize, (19, 19, 39, 255))
@@ -59,9 +52,9 @@ class gameloop:
         self.gameTerrain = terrain(self.screensize)
 
         #create player objects with random colors
-        random.shuffle(gameloop._playercolors)
+        random.shuffle(gamescene._playercolors)
         for i in range(len(playernames)):
-            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, gameloop._playercolors[i % len(self._playercolors)])
+            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, gamescene._playercolors[i % len(self._playercolors)])
 
         #reset all variables
         self.restart()
@@ -74,7 +67,7 @@ class gameloop:
     def restart(self):
 
         #regenerate the terrain
-        self.gameTerrain.groundcolor = random.choice(gameloop._groundcolors)[:-1]
+        self.gameTerrain.groundcolor = random.choice(gamescene._groundcolors)[:-1]
         self.gameTerrain.generateTerrain()
 
         #random spawn order
@@ -134,12 +127,12 @@ class gameloop:
 
                 #display screen surface
                 pygame.display.flip()
-        pygame.quit()
 
     #event handling
     def _eventhandling(self, eventlist):
         for event in eventlist:
             if event.type == pygame.QUIT:
+                self.nextscene = None
                 return False
             elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
                 return False
@@ -235,6 +228,7 @@ class gameloop:
             textsurface = self.font.render(text, False, self.currentplayer.color)
             screen.blit(textsurface, (self.screensize[0]-50-textsurface.get_rect().w, 50))
 
+            #ddraw wind direction indicator
             if self.wind.force.x < 0:
                 pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-10, 50+5), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+15), (self.screensize[0]-50-textsurface.get_rect().w-20, 50+20/2)))
             elif self.wind.force.x > 0:

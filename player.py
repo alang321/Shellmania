@@ -12,6 +12,7 @@ from playerinventory import playerinventory
 
 
 class player:
+    # todo: implemnt fuel system
     _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile, nuke], [-1, 2, 1, 2, -1], 0)
 
     weapon = bouncybomb
