@@ -44,9 +44,17 @@ class gamescene:
         self.shotlimit = self.settings.gamevalues["Shot limit"]   # max shots per round per player
 
         #initilize fonts
-        self.font = pygame.font.SysFont('Calibri', 20)
-        self.winnersubfont = pygame.font.SysFont('Arial', 25)
-        self.winnerfont = pygame.font.SysFont('Arial', 50)
+        self.font = pygame.font.SysFont('Calibri', max(int(self.screensize[1]*0.028), 12))
+        self.winnersubfont = pygame.font.SysFont('Arial', max(int(self.screensize[1]*0.035), 20))
+        self.winnerfont = pygame.font.SysFont('Arial', max(int(self.screensize[1]*0.0695), 25))
+
+        #sizes and margins
+        self.margintop = self.screensize[1] * 0.0694
+        self.marginside = self.screensize[1] * 0.055
+        self.shotbarheight = self.screensize[1] * 0.00694
+        self.arrowheight = self.screensize[1] * 0.02
+        self.arrowwidth = self.screensize[1] * 0.02
+        self.arrowmargin = 5
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
@@ -220,7 +228,7 @@ class gamescene:
             #draw remaining time
             text = self.currentplayer.name + "  -  " + str(round(max(self.lengthofturn - (self.elapsedtime - self.currentturnstart), 0.0), 1)) + "  -  " + str(self.shotlimit - self.currentplayer.shotcounter)
             textsurface = self.font.render(text, False, self.currentplayer.color)
-            screen.blit(textsurface, (50, 50))
+            screen.blit(textsurface, (self.marginside, self.margintop))
 
             #draw wind text
             if self.maxwind == 0:
@@ -228,19 +236,26 @@ class gamescene:
             else:
                 text = str(abs(round((self.wind.force.x/self.maxwind)*10, 1)))
             textsurface = self.font.render(text, False, self.currentplayer.color)
-            screen.blit(textsurface, (self.screensize[0]-50-textsurface.get_rect().w, 50))
+            screen.blit(textsurface, (self.screensize[0]-self.marginside-textsurface.get_rect().w, self.margintop))
 
             #ddraw wind direction indicator
             if self.wind.force.x < 0:
-                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-10, 50+5), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+15), (self.screensize[0]-50-textsurface.get_rect().w-20, 50+20/2)))
+                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin ,self.margintop + self.arrowheight/2)
+                arrowsidex = self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth
+                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
             elif self.wind.force.x > 0:
-                pygame.draw.polygon(screen, self.currentplayer.color, ((self.screensize[0]-50-textsurface.get_rect().w-20, 50+5), (self.screensize[0]-50-textsurface.get_rect().w-20, 50+15), (self.screensize[0]-50-textsurface.get_rect().w-10, 50+20/2)))
+                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth ,self.margintop + self.arrowheight/2)
+                arrowsidex = self.screensize[0] - self.marginside - textsurface.get_rect().w - self.arrowmargin
+                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
 
             #draw shotcharging bar
             if self.currentplayer.shotcharging:
                 time = self.elapsedtime - self.currentplayer.shootingstarttime
             else:
                 time = 0.0
+            pygame.draw.rect(screen, self.currentplayer.color, ((0, 0), (
+            self.screensize[0] * min(max(time / self.currentplayer.fullpowershottime, self.currentplayer.minshotpower),
+                                     1.0), self.shotbarheight)))
 
             #draw currently equipped weapon name
             amount = self.currentplayer.inventory.getcurrentamount()
@@ -250,21 +265,23 @@ class gamescene:
                 text = self.currentplayer.inventory.getcurrentitem()._name + "  -  " + str(amount)
 
             textsurface = self.font.render(text, False, self.currentplayer.color)
-            screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, 50))
+            screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, self.margintop))
 
-            pygame.draw.rect(screen, self.currentplayer.color, ((0, 0), (self.screensize[0] * min(max(time/self.currentplayer.fullpowershottime, self.currentplayer.minshotpower), 1.0), 5)))
             return
         else:
+            self.offsetfromcenter =
+            self.boxmargin =
+            self.subtextmargin =
+
+            ()
             if self.gamestate == self.gamestates["draw"]:
                 text = "Draw"
                 textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
+                pygame.draw.rect(textsurface, pygame.color.THECOLORS["white"], ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
             else:
-                textsurface = pygame.Surface(self.screensize)
-                textsurface.set_colorkey((0, 0, 0))
-
                 text = "Winner: " + self.aliveplayers[0].name
                 textsurface2 = self.winnerfont.render(text, False, self.aliveplayers[0].color)
-                textsurface.blit(textsurface2, (textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
+                screen.blit(textsurface2, (sc.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
 
                 pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
 

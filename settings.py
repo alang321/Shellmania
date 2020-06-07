@@ -25,6 +25,7 @@ class gamesettings:
 
     def __init__(self, path):
         self.path = path
+        #todo remove this
         self.reset()
         self.values = self.readsettingsfromfile()
 
