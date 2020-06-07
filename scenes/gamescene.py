@@ -45,7 +45,7 @@ class gamescene:
 
         #initilize fonts
         self.font = pygame.font.SysFont('Calibri', max(int(self.screensize[1]*0.028), 12))
-        self.winnersubfont = pygame.font.SysFont('Arial', max(int(self.screensize[1]*0.035), 20))
+        self.winnersubfont = pygame.font.SysFont('Arial', max(int(self.screensize[1]*0.05), 20))
         self.winnerfont = pygame.font.SysFont('Arial', max(int(self.screensize[1]*0.0695), 25))
 
         #sizes and margins
@@ -55,6 +55,9 @@ class gamescene:
         self.arrowheight = self.screensize[1] * 0.02
         self.arrowwidth = self.screensize[1] * 0.02
         self.arrowmargin = 5
+        self.offsetfromcenter = self.screensize[1]*0.2
+        self.boxmargin =self.screensize[1]*0.05
+        self.subtextmargin = 0.02 * self.screensize[1]
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)
@@ -239,11 +242,11 @@ class gamescene:
             screen.blit(textsurface, (self.screensize[0]-self.marginside-textsurface.get_rect().w, self.margintop))
 
             #ddraw wind direction indicator
-            if self.wind.force.x < 0:
+            if self.wind.force.x > 0:
                 arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin ,self.margintop + self.arrowheight/2)
                 arrowsidex = self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth
                 pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
-            elif self.wind.force.x > 0:
+            elif self.wind.force.x < 0:
                 arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth ,self.margintop + self.arrowheight/2)
                 arrowsidex = self.screensize[0] - self.marginside - textsurface.get_rect().w - self.arrowmargin
                 pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
@@ -269,28 +272,32 @@ class gamescene:
 
             return
         else:
-            self.offsetfromcenter =
-            self.boxmargin =
-            self.subtextmargin =
-
-            ()
             if self.gamestate == self.gamestates["draw"]:
                 text = "Draw"
                 textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
-                pygame.draw.rect(textsurface, pygame.color.THECOLORS["white"], ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
+                y1 = self.screensize[1]/2-self.offsetfromcenter
+                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
+                pygame.draw.rect(screen, pygame.color.THECOLORS["white"], (
+                (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                (textsurface.get_rect().w + self.boxmargin * 2,
+                 textsurface.get_rect().h + self.boxmargin * 2)), 3)
+
             else:
                 text = "Winner: " + self.aliveplayers[0].name
-                textsurface2 = self.winnerfont.render(text, False, self.aliveplayers[0].color)
-                screen.blit(textsurface2, (sc.get_rect().w / 2 - textsurface2.get_rect().w / 2, (textsurface.get_rect().h / 2)-90))
-
-                pygame.draw.rect(textsurface, self.aliveplayers[0].color, ((textsurface.get_rect().w / 2 - textsurface2.get_rect().w / 2 - 20, (textsurface.get_rect().h / 2)-110), (textsurface2.get_rect().w + 40, 162)), 3)
+                textsurface = self.winnerfont.render(text, False, self.aliveplayers[0].color)
+                y1 = self.screensize[1]/2-self.offsetfromcenter
+                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
 
                 text = "Wins: " + str(self.aliveplayers[0].wins)
-                textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
-                textsurface.blit(textsurface3, (textsurface.get_rect().w / 2 - textsurface3.get_rect().w / 2, (textsurface.get_rect().h / 2)-28))
+                textsurface2 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
+                y2 = y1 + textsurface.get_rect().h+self.subtextmargin
+                screen.blit(textsurface2, (self.screensize[0]/2-textsurface2.get_rect().w/2, y2))
 
                 text = "Kills: " + str(self.aliveplayers[0].kills)
-                textsurface4 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
-                textsurface.blit(textsurface4, (textsurface.get_rect().w / 2 - textsurface4.get_rect().w / 2, (textsurface.get_rect().h / 2)+7))
+                textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
+                y3 = y2 + textsurface2.get_rect().h+self.subtextmargin
+                screen.blit(textsurface3, (self.screensize[0]/2-textsurface3.get_rect().w/2, y3))
 
-            screen.blit(textsurface, (self.screensize[0] / 2 - textsurface.get_rect().w / 2, self.screensize[1] / 2 - textsurface.get_rect().h / 2))
+                pygame.draw.rect(screen, self.aliveplayers[0].color, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)), 3)
+
