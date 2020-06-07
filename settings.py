@@ -1,12 +1,10 @@
 import pygame
 
-# todo: implement max turrent angle and default fuel and if reset every round fuel
-
 class gamesettings:
     #default values
     _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE}
     _gamekeys = {'Quit':pygame.K_ESCAPE, 'Newround':pygame.K_RETURN}
-    _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1}
+    _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1, 'Enable fuel': False, 'Reset fuel':True, 'Initial fuel':10.0, 'Max turret angle':85.0, 'Player speed':45.0}
     _design = {'Button color':[210,206,194,255], 'Button hover color':[242,190,28,255], 'Button pressed color':list(pygame.color.THECOLORS["orange"]), 'Button inactive color':list(pygame.color.THECOLORS["red"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':[130,130,130], 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Title color':[242,190,28,255], 'Font type':'Calibri'}
     _misc = {'Game title': "Tiny Tank"}
 
@@ -27,6 +25,7 @@ class gamesettings:
 
     def __init__(self, path):
         self.path = path
+        self.reset()
         self.values = self.readsettingsfromfile()
 
         #for easier access

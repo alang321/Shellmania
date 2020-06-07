@@ -10,9 +10,7 @@ import random
 from particles import particle
 from playerinventory import playerinventory
 
-
 class player:
-    # todo: implemnt fuel system
     _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, 2, 1, 2], 0)
 
     weapon = bouncybomb
@@ -23,20 +21,27 @@ class player:
     turretLength = 13.0
     #turret origin distance from ground
     turretstart = 5.0
-    #maximum turrent angle in radians
-    maxturretangle = 90.0 * (np.pi/180.0)
     width = 25.0
     height = 40.0
 
     smokeinterval = 0.1
 
-    def __init__(self, name, terrain, wind, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):
+    def __init__(self, settings, name, terrain, wind, entities, aliveplayers, color=pygame.color.THECOLORS["red"]):
         #references
         self.entities = entities
         self.entities[0].append(self)
         self.terrain = terrain
         self.aliveplayers = aliveplayers
         self.wind = wind
+        self.settings = settings
+
+        # maximum turrent angle in radians
+        self.maxturretangle = self.settings.gamevalues["Max turret angle"] * (np.pi / 180.0)
+
+        #fuel in seconds
+        self.usefuel = self.settings.gamevalues["Enable fuel"]
+        self.initialfuel = float(self.settings.gamevalues["Initial fuel"])
+        self.fuel = self.initialfuel
 
         self.color = color
         self.name = name
@@ -66,7 +71,7 @@ class player:
         self.turretOrigin = []
 
         # speed in pixels per second
-        self.speed = 50.0
+        self.speed = self.settings.gamevalues["Player speed"]
         #if moving left or right
         self.left = False
         self.right = False
@@ -102,6 +107,8 @@ class player:
 
     def respawn(self, xpos):
         self.pos = [float(xpos), 0.0]
+
+        self.fuel = self.initialfuel
 
         self.kills = 0
         self.health = 1.0
@@ -179,8 +186,15 @@ class player:
 
             #draw text and health bar
             if not self.destroyed:
+                #fuelbar
+                if self.usefuel:
+                    pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-28), (26, 4)), 1)
+                    pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-28), (26*max(self.fuel/self.initialfuel, 0.0), 4)))
+
+                #health bar
                 pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
                 pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
+
                 screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
         return
 
@@ -203,15 +217,17 @@ class player:
 
     #moves into dir, which should be positive or negative 1, left neg, right pos
     def move(self, dt, movedir):
-        #movement direction vector, normal vector to the surface normal
-        dirvector = -movedir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
+        if self.fuel >= 0 or not self.usefuel:
+            #movement direction vector, normal vector to the surface normal
+            dirvector = -movedir * self.terrain.normalmap[int(self.pos[0])].getnormalvec()
 
-        newx = self.pos[0] + dirvector.x * dt * self.speed
+            newx = self.pos[0] + dirvector.x * dt * self.speed
 
-        #checks if newpos is in bounds and if height difference exceeds maximum
-        if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
-            self.pos[0] = newx
-            self.setonground()
+            #checks if newpos is in bounds and if height difference exceeds maximum
+            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
+                self.fuel -= dt
+                self.pos[0] = newx
+                self.setonground()
 
     def firekeyevent(self, eventtype, elapsedtime):
         if self.controlActive:

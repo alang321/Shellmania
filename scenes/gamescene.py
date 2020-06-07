@@ -54,7 +54,7 @@ class gamescene:
         #create player objects with random colors
         random.shuffle(gamescene._playercolors)
         for i in range(len(playernames)):
-            player(playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, gamescene._playercolors[i % len(self._playercolors)])
+            player(settings, playernames[i], self.gameTerrain, self.wind, self.entities, self.aliveplayers, gamescene._playercolors[i % len(self._playercolors)])
 
         #reset all variables
         self.restart()
@@ -183,6 +183,8 @@ class gamescene:
     def _switchplayer(self, oldplayer, newplayer):
         #only switch if htere are no more missiles flying
         if len(self.entities[1]) == 0:
+            if self.settings.gamevalues['Reset fuel']:
+                oldplayer.fuel = oldplayer.initialfuel
             #wind
             self.wind.newWind()
             #oldplayer deativate control
