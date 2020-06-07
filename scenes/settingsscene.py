@@ -63,7 +63,7 @@ class settingsscene:
                                 self.bordercolorhovering, self.bordercolor, self._valuechanged)
         self.buttonlist.append(checkbox1)
 
-        buttoncapturetest = keycapture(True, self.settings.playerkeys["Left"], [pygame.K_BACKSPACE, self.settings.gamekeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
+        buttoncapturetest = keycapture(True, self.settings.playerkeys["Left"], [self.settings.gamekeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
                               self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
                               self.textboxinactivecolor, self._keychanged, None)
         self.keycapturelist.append(buttoncapturetest)

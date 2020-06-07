@@ -35,6 +35,9 @@ class keycapture:
 
         self.delete = False
 
+        #whether the last input was wrong, as in exluded or self
+        self.lastinputerror = False
+
         self.hasfocus = hasfocus
 
         self.hovering = False
@@ -74,6 +77,9 @@ class keycapture:
                 self.settext()
                 if self.keychangedfunction != None:
                     self.keychangedfunction(self)
+                self.lastinputerror = False
+            else:
+                self.lastinputerror = True
             self.rendertext(self.text)
 
     def update(self):
@@ -81,7 +87,13 @@ class keycapture:
         return
 
     def draw(self, screen):
-        #switch color to current state color, clicked before hovering
+
+        if self.lastinputerror and self.hasfocus:
+            bordercolor = pygame.color.THECOLORS["red"]
+        else:
+            self.lastinputerror = False
+            bordercolor = self.bordercolor
+
         if self.hasfocus:
             color = self.activecolorbackground
         else:
@@ -89,7 +101,7 @@ class keycapture:
 
         #draw button rect
         self.textbox.fill(color)
-        pygame.draw.rect(self.textbox, self.bordercolor, self.borderrect, 2)
+        pygame.draw.rect(self.textbox, bordercolor, self.borderrect, 2)
         screen.blit(self.textbox, (self.pos[0]-self.rect.w/2, self.pos[1]-self.rect.h/2))
 
         #draw text

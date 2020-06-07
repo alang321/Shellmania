@@ -284,28 +284,36 @@ class gamescene:
                 text = "Draw"
                 textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
                 y1 = self.screensize[1]/2-self.offsetfromcenter
-                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
+                pygame.draw.rect(screen, (19, 19, 39, 255), (
+                (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                (textsurface.get_rect().w + self.boxmargin * 2,
+                 textsurface.get_rect().h + self.boxmargin * 2)), 3)
                 pygame.draw.rect(screen, pygame.color.THECOLORS["white"], (
                 (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2,
                  textsurface.get_rect().h + self.boxmargin * 2)), 3)
+                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
 
             else:
                 text = "Winner: " + self.aliveplayers[0].name
                 textsurface = self.winnerfont.render(text, False, self.aliveplayers[0].color)
                 y1 = self.screensize[1]/2-self.offsetfromcenter
-                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
 
                 text = "Wins: " + str(self.aliveplayers[0].wins)
                 textsurface2 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
                 y2 = y1 + textsurface.get_rect().h+self.subtextmargin
-                screen.blit(textsurface2, (self.screensize[0]/2-textsurface2.get_rect().w/2, y2))
 
                 text = "Kills: " + str(self.aliveplayers[0].kills)
                 textsurface3 = self.winnersubfont.render(text, False, self.aliveplayers[0].color)
                 y3 = y2 + textsurface2.get_rect().h+self.subtextmargin
-                screen.blit(textsurface3, (self.screensize[0]/2-textsurface3.get_rect().w/2, y3))
 
+                #draw boxes
+                pygame.draw.rect(screen, (19, 19, 39, 255), ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)))
                 pygame.draw.rect(screen, self.aliveplayers[0].color, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)), 3)
+                #draw text
+                screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
+                screen.blit(textsurface2, (self.screensize[0]/2-textsurface2.get_rect().w/2, y2))
+                screen.blit(textsurface3, (self.screensize[0]/2-textsurface3.get_rect().w/2, y3))
 
