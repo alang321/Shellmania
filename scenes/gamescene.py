@@ -136,7 +136,7 @@ class gamescene:
                 exit()
             elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Newround"]:
                 if self.gamestate != self.gamestates["round"]:
                     self.restart()
             elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.settings.playerkeys["Fire"]: # start shot

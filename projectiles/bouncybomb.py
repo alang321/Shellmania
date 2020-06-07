@@ -73,7 +73,7 @@ class bouncybomb:
                     newposset = False
 
                     steps = 5
-                    for i in np.arange(steps+1):
+                    for i in range(1, steps+1):
                         #go back in a certain number of steps
                         vec = opposite * (i/float(steps)) * 20.0 * dt
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]

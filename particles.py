@@ -140,13 +140,15 @@ class bouncyparticle:
 
             if 0 < self.pos[0] < self.terrain.bounds[0]-1: # check if in bounds to avoid out of bounds array call in next line
                 if self.pos[1] >= self.terrain.heightmap[int(self.pos[0])]: # check if at groundlevel
-                    normal = self.terrain.normalmap[int(self.pos[0])]
+                    # vector in the opposite direction of the curren velocity
+                    opposite = -1 * self.velocity
 
-                    newpos = False
                     newposset = False
 
-                    for i in np.arange(0, 9, 0.3):
-                        vec = normal * i
+                    steps = 5
+                    for i in range(1, steps + 1):
+                        # go back in a certain number of steps
+                        vec = opposite * (i / float(steps)) * 20.0 * dt
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 
                         if newpos[1] < self.terrain.heightmap[int(newpos[0])]:
