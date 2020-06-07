@@ -258,8 +258,11 @@ class player:
             if self.health <= 0.0:
                 self.health = 0.0
                 self.destroyed = True
+                #if control is active dont remove from list, so index can be found and a switch to nex tplayer can be made, it is removed from the list in turnlogic
+                if not self.controlActive:
+                    self.aliveplayers.remove(self)
+
                 self.controlActive = False
-                self.aliveplayers.remove(self)
                 if player != self:
                     player.inventory.addtoitemamount(nuke, 1)
                     player.kills += 1

@@ -46,7 +46,7 @@ class settingsscene:
                                 self.pressedcolor, self.inactivecolor, self._goback)
         self.buttonlist.append(backbutton)
 
-        checkbox1 = checkbox(False, self.font, [self.screensize[0] / 2, self.screensize[1] / 2+80], self.uiheight*0.8,
+        checkbox1 = checkbox(False, self.font, [self.screensize[0] / 2, self.screensize[1] / 2+80], self.uiheight*0.7,
                                 self.checkboxcolor, self.bordercolor,
                                 self.bordercolorhovering, self.bordercolor, self._valuechanged)
         self.buttonlist.append(checkbox1)

@@ -104,8 +104,8 @@ class gamescene:
         self.currentturnstart = 0.001 * pygame.time.get_ticks()
 
         #random player starts
-        self.currentindex = random.randint(0, len(self.playernames)-1)
-        self.currentplayer = self.aliveplayers[self.currentindex]
+        currentindex = random.randint(0, len(self.playernames)-1)
+        self.currentplayer = self.aliveplayers[currentindex]
         self.currentplayer.controlActive = True
 
         #wind
@@ -181,15 +181,19 @@ class gamescene:
                 self.gamestate = self.gamestates["draw"]
 
         elif self.currentplayer.destroyed: #switch to next alive player if current is destroyed
-            newindex = (self.currentindex) % len(self.aliveplayers)
-            if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
-                self.currentindex = newindex
+            #get currentindex
+            currentindex = self.aliveplayers.index(self.currentplayer)
+            #remove from aliveplayers list
+            self.aliveplayers.remove(self.currentplayer)
+            #if exceeds length set to 0
+            newindex = (currentindex) % len(self.aliveplayers)
+            self._switchplayer(self.currentplayer, self.aliveplayers[newindex])
 
         elif self.lengthofturn < (self.elapsedtime - self.currentturnstart) or self.currentplayer.shotcounter >= self.shotlimit: # if turnlength or shotlimit is exceeded switch player
             self.currentplayer.controlActive = False
-            newindex = (self.currentindex + 1) % len(self.aliveplayers)
-            if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
-                self.currentindex = newindex
+            currentindex = self.aliveplayers.index(self.currentplayer)
+            newindex = (currentindex + 1) % len(self.aliveplayers)
+            self._switchplayer(self.currentplayer, self.aliveplayers[newindex])
 
     def _switchplayer(self, oldplayer, newplayer):
         #only switch if htere are no more missiles flying
@@ -202,8 +206,8 @@ class gamescene:
             oldplayer.shotcharging = False
             oldplayer.controlActive = False
             oldplayer.shotcounter = 0
-            self.currentplayer.left = False
-            self.currentplayer.right = False
+            oldplayer.left = False
+            oldplayer.right = False
             #newplayer activate control
             self.currentplayer = newplayer
             newplayer.controlActive = True
@@ -242,14 +246,15 @@ class gamescene:
             screen.blit(textsurface, (self.screensize[0]-self.marginside-textsurface.get_rect().w, self.margintop))
 
             #ddraw wind direction indicator
+            margintop = 4
             if self.wind.force.x > 0:
-                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin ,self.margintop + self.arrowheight/2)
+                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin ,self.margintop + self.arrowheight/2 + margintop)
                 arrowsidex = self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth
-                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
+                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight+margintop), (arrowsidex, self.margintop+margintop)))
             elif self.wind.force.x < 0:
-                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth ,self.margintop + self.arrowheight/2)
+                arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth ,self.margintop + self.arrowheight/2+margintop   )
                 arrowsidex = self.screensize[0] - self.marginside - textsurface.get_rect().w - self.arrowmargin
-                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight), (arrowsidex, self.margintop)))
+                pygame.draw.polygon(screen, self.currentplayer.color, (arrowpoint, (arrowsidex, self.margintop+self.arrowheight+margintop), (arrowsidex, self.margintop+margintop)))
 
             #draw shotcharging bar
             if self.currentplayer.shotcharging:
