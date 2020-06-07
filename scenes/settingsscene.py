@@ -28,6 +28,7 @@ class settingsscene:
         # ui element height and width
         self.uiheight = self.screensize[1]*0.059
         self.uiwidth = self.screensize[0]*0.3
+        self.backbuttonmargin = self.screensize[1]*0.05
 
         #button colors
         self.buttoncolor = settings.design["Button color"]
@@ -52,7 +53,7 @@ class settingsscene:
         return
 
     def _createbuttons(self):
-        backbutton = button("Back", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], self.uiwidth, self.uiheight,
+        backbutton = button("< Back", self.font, [self.backbuttonmargin+ self.uiwidth*0.3/2, self.backbuttonmargin+self.uiheight/2], self.uiwidth*0.3, self.uiheight,
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._goback)
         self.buttonlist.append(backbutton)

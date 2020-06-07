@@ -249,7 +249,7 @@ class gamescene:
             screen.blit(textsurface, (self.screensize[0]-self.marginside-textsurface.get_rect().w, self.margintop))
 
             #ddraw wind direction indicator
-            margintop = 4
+            margintop = 0
             if self.wind.force.x > 0:
                 arrowpoint = (self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin ,self.margintop + self.arrowheight/2 + margintop)
                 arrowsidex = self.screensize[0]-self.marginside-textsurface.get_rect().w-self.arrowmargin- self.arrowwidth

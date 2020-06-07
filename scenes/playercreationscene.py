@@ -65,7 +65,7 @@ class playercreationscene:
         self.removexpos = self.startxpos + self.buttonmargins * 0.5 + self.buttonwidth * 0.5
         self.startypos = self.screensize[1]*0.5 - (self.startheight+self.buttonmargins+self.uiheight)*0.5 + self.startheight * 0.5
         self.buttonypos = self.screensize[1]*0.5 + (self.startheight+self.buttonmargins+self.uiheight)*0.5 - self.uiheight * 0.5
-
+        self.backbuttonmargin = self.screensize[1]*0.05
 
         self._addtextbox(self.minplayers)
         self._createbuttons()
@@ -88,6 +88,11 @@ class playercreationscene:
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._start)
         self.buttonlist.append(startbutton)
+
+        backbutton = button("< Back", self.font, [self.backbuttonmargin+ self.uiwidth*0.3/2, self.backbuttonmargin+self.uiheight/2], self.uiwidth*0.3, self.uiheight,
+                                self.buttoncolor, self.hovercolor,
+                                self.pressedcolor, self.inactivecolor, self._goback)
+        self.buttonlist.append(backbutton)
 
         self._activatedeactivatebuttons()
 
@@ -141,7 +146,7 @@ class playercreationscene:
                         pygame.quit()
                         exit()
                     elif event.type == pygame.KEYUP and event.key == self.backkey:
-                        self._goback()
+                        self._goback(None)
                     else:
                         for i in self.textboxlist:
                             i.eventhandler(event)
@@ -155,7 +160,7 @@ class playercreationscene:
                 # display screen surface
                 pygame.display.flip()
 
-    def _goback(self):
+    def _goback(self, object):
         self.nextscene = None
         self.running = False
 
