@@ -13,6 +13,9 @@ from playerinventory import playerinventory
 class player:
     _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, 2, 1, 2], 0)
 
+    #this holds the current player if there is one
+    _currentplayer = None
+
     weapon = bouncybomb
 
     #drawing
@@ -258,8 +261,8 @@ class player:
             if self.health <= 0.0:
                 self.health = 0.0
                 self.destroyed = True
-                #if control is active dont remove from list, so index can be found and a switch to next tplayer can be made, it is removed from the aliveplayer list in turnlogic
-                if not self.controlActive:
+                #if self is the current player dont remove from aliveplayers, so index can be found and a switch to next tplayer can be made, it is removed from the aliveplayer list in turnlogic
+                if not self == player._currentplayer:
                     self.aliveplayers.remove(self)
 
                 self.controlActive = False

@@ -107,6 +107,7 @@ class gamescene:
         currentindex = random.randint(0, len(self.playernames)-1)
         self.currentplayer = self.aliveplayers[currentindex]
         self.currentplayer.controlActive = True
+        player._currentplayer = self.currentplayer
 
         #wind
         self.wind.newWind()
@@ -183,9 +184,9 @@ class gamescene:
         elif self.currentplayer.destroyed: #switch to next alive player if current is destroyed
             #get currentindex
             destroyedplayer = self.currentplayer
-            currentindex = self.aliveplayers.index(destroyedplayer)
+            currentindex = self.aliveplayers.index(self.currentplayer)
             #if exceeds length set to 0
-            newindex = (currentindex) % len(self.aliveplayers)
+            newindex = (currentindex + 1) % len(self.aliveplayers)
             if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
                 #remove from aliveplayers list
                 self.aliveplayers.remove(destroyedplayer)
@@ -211,6 +212,7 @@ class gamescene:
             oldplayer.right = False
             #newplayer activate control
             self.currentplayer = newplayer
+            player._currentplayer = self.currentplayer
             newplayer.controlActive = True
             self.currentturnstart = self.elapsedtime
             return True
