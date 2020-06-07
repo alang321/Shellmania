@@ -188,7 +188,7 @@ class gamescene:
             #if exceeds length set to 0
             newindex = (currentindex + 1) % len(self.aliveplayers)
             if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
-                #remove from aliveplayers list
+                #remove from aliveplayers list only if switched
                 self.aliveplayers.remove(destroyedplayer)
 
         elif self.lengthofturn < (self.elapsedtime - self.currentturnstart) or self.currentplayer.shotcounter >= self.shotlimit: # if turnlength or shotlimit is exceeded switch player

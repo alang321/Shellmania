@@ -1,6 +1,7 @@
 import pygame
 from ui.button import button
 from ui.checkbox import checkbox
+from ui.keycapture import keycapture
 
 class settingsscene:
     nextscene = None
@@ -11,15 +12,18 @@ class settingsscene:
         self.arguments = []
         self.screen = screen
 
+        self.settings = settings
+
         self.running = True
 
-        self.font = pygame.font.SysFont(settings.design["Font type"], 30)
-
         self.screensize = settings.gamevalues["Resolution"]
+
+        self.font = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.042), 12))
 
         self.background = background
 
         self.buttonlist = []
+        self.keycapturelist = []
 
         # ui element height and width
         self.uiheight = self.screensize[1]*0.059
@@ -33,6 +37,13 @@ class settingsscene:
         self.bordercolor = settings.design["Textbox border color"]
         self.bordercolorhovering = self.hovercolor
         self.checkboxcolor = settings.design["Textbox active color"]
+
+        #textboxcolors
+        self.textboxactivecolor = settings.design["Textbox active color"]
+        self.textboxinactivecolor = settings.design["Textbox inactive color"]
+        self.textboxbordercolor = settings.design["Textbox border color"]
+
+        self.textboxfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.033), 12))
 
         self.backkey = settings.gamekeys["Quit"]
 
@@ -51,8 +62,18 @@ class settingsscene:
                                 self.bordercolorhovering, self.bordercolor, self._valuechanged)
         self.buttonlist.append(checkbox1)
 
+        buttoncapturetest = keycapture(True, self.settings.playerkeys["Left"], [pygame.K_BACKSPACE, self.settings.gamekeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
+                              self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
+                              self.textboxinactivecolor, self._keychanged, None)
+        self.keycapturelist.append(buttoncapturetest)
+
     def _drawbuttons(self):
         for i in self.buttonlist:
+            i.update()
+            i.draw(self.screen)
+
+    def _drawkeycaptures(self):
+        for i in self.keycapturelist:
             i.update()
             i.draw(self.screen)
 
@@ -74,11 +95,15 @@ class settingsscene:
                         exit()
                     if event.type == pygame.KEYUP and event.key == self.backkey:
                         self._goback(None)
+                    else:
+                        for i in self.keycapturelist:
+                            i.eventhandler(event)
                     pass
 
                 # draw
                 self.background.draw(self.screen)
                 self._drawbuttons()
+                self._drawkeycaptures()
 
                 # display screen surface
                 pygame.display.flip()
@@ -89,3 +114,6 @@ class settingsscene:
 
     def _valuechanged(self, object):
         print(object.key, " value is now ", object.checked)
+
+    def _keychanged(self, object):
+        print(object.key,"changed key new key", object.keyvalue)

@@ -104,7 +104,7 @@ class playercreationscene:
                 self.textboxlist[-1].hasfocus = False
 
             nametextbox = textbox(True, "", self.textboxfont, [self.textboxxpos, ypos], self.textboxwidth, self.textboxheight, self.textboxbordercolor, self.textboxactivecolor, self.textboxinactivecolor, None, None)
-            nametextbox.rendertext("Enter player name...")
+            nametextbox.rendertext("Enter name...")
             self.textboxlist.append(nametextbox)
 
 
