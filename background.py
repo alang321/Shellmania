@@ -3,7 +3,7 @@ import random
 from terrain import terrain
 
 class background:
-    def __init__(self, screensize, backgroundcolor=pygame.color.THECOLORS["black"], decoterrain=False, starcolor=pygame.color.THECOLORS["white"]):
+    def __init__(self, screensize, backgroundcolor=pygame.color.THECOLORS["black"], starcolor=pygame.color.THECOLORS["white"]):
         self.starcolor = starcolor[:-1]
         self.backgroundcolor = backgroundcolor[:-1]
         self.screensize = screensize
@@ -20,11 +20,6 @@ class background:
 
         #generate n number of stars with random locations
         self.generateStars(star, int((self.screensize[0] * self.screensize[1])/2600.0))
-
-        if decoterrain:
-            deco = terrain(screensize)
-            deco.generateTerrain()
-            deco.draw(self.surface)
 
         self.surface.convert()
         return

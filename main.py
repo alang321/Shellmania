@@ -23,7 +23,7 @@ class main:
         else:
             self.screen = pygame.display.set_mode(self.screensize)
 
-        self.background = background(self.screensize, (19, 19, 39, 255), True)
+        self.background = background(self.screensize, (19, 19, 39, 255))
 
         self.defaultscene = mainmenuscene
 

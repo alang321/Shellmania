@@ -1,5 +1,6 @@
 import pygame
 from ui.button import button
+from ui.checkbox import checkbox
 
 class settingsscene:
     nextscene = None
@@ -21,14 +22,17 @@ class settingsscene:
         self.buttonlist = []
 
         # ui element height and width
-        self.uiheight = self.screensize[1]/18
-        self.uiwidth = self.screensize[0]/4.3
+        self.uiheight = self.screensize[1]*0.059
+        self.uiwidth = self.screensize[0]*0.3
 
         #button colors
         self.buttoncolor = settings.design["Button color"]
         self.hovercolor = settings.design["Button hover color"]
         self.pressedcolor = settings.design["Button pressed color"]
         self.inactivecolor = settings.design["Button inactive color"]
+        self.bordercolor = settings.design["Textbox border color"]
+        self.bordercolorhovering = self.hovercolor
+        self.checkboxcolor = settings.design["Textbox active color"]
 
         self.backkey = settings.gamekeys["Quit"]
 
@@ -37,10 +41,15 @@ class settingsscene:
         return
 
     def _createbuttons(self):
-        settingsbutton = button("Back", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], self.uiwidth, self.uiheight,
+        backbutton = button("Back", self.font, [self.screensize[0] / 2, self.screensize[1] / 2], self.uiwidth, self.uiheight,
                                 self.buttoncolor, self.hovercolor,
                                 self.pressedcolor, self.inactivecolor, self._goback)
-        self.buttonlist.append(settingsbutton)
+        self.buttonlist.append(backbutton)
+
+        checkbox1 = checkbox(False, self.font, [self.screensize[0] / 2, self.screensize[1] / 2+80], self.uiheight*0.8,
+                                self.checkboxcolor, self.bordercolor,
+                                self.bordercolorhovering, self.bordercolor, self._valuechanged)
+        self.buttonlist.append(checkbox1)
 
     def _drawbuttons(self):
         for i in self.buttonlist:
@@ -77,3 +86,6 @@ class settingsscene:
     def _goback(self, object):
         self.nextscene = None
         self.running = False
+
+    def _valuechanged(self, object):
+        print(object.key, " value is now ", object.checked)
