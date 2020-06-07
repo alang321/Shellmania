@@ -182,12 +182,13 @@ class gamescene:
 
         elif self.currentplayer.destroyed: #switch to next alive player if current is destroyed
             #get currentindex
-            currentindex = self.aliveplayers.index(self.currentplayer)
-            #remove from aliveplayers list
-            self.aliveplayers.remove(self.currentplayer)
+            destroyedplayer = self.currentplayer
+            currentindex = self.aliveplayers.index(destroyedplayer)
             #if exceeds length set to 0
             newindex = (currentindex) % len(self.aliveplayers)
-            self._switchplayer(self.currentplayer, self.aliveplayers[newindex])
+            if self._switchplayer(self.currentplayer, self.aliveplayers[newindex]):
+                #remove from aliveplayers list
+                self.aliveplayers.remove(destroyedplayer)
 
         elif self.lengthofturn < (self.elapsedtime - self.currentturnstart) or self.currentplayer.shotcounter >= self.shotlimit: # if turnlength or shotlimit is exceeded switch player
             self.currentplayer.controlActive = False

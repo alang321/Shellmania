@@ -258,7 +258,7 @@ class player:
             if self.health <= 0.0:
                 self.health = 0.0
                 self.destroyed = True
-                #if control is active dont remove from list, so index can be found and a switch to nex tplayer can be made, it is removed from the list in turnlogic
+                #if control is active dont remove from list, so index can be found and a switch to next tplayer can be made, it is removed from the aliveplayer list in turnlogic
                 if not self.controlActive:
                     self.aliveplayers.remove(self)
 

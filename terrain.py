@@ -83,6 +83,7 @@ class terrain:
         self.updateNormalmap(rangex)
 
     def draw(self, screen):
+        print("draw terrain")
         screen.blit(self.surface, (0, 0))
         #for i in range(0, self.bounds[0], 10):
             #pygame.draw.aaline(screen, pygame.color.THECOLORS["white"], [i, self.heightmap[i]], [i + 30.0 * self.normalmap[i].x, self.heightmap[i] + 30.0 * self.normalmap[i].y])
