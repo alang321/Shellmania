@@ -1,17 +1,18 @@
 import pygame
 
+#gets a keyinput if it has focus, doesnt set it just gets it
 class keycapture:
-    def __init__(self, hasfocus, initialkey, excludekeys, font, pos, w, h, bordercolor, backgroundcoloractive, backgroundcolorinactive, keychangedfunction, lostfocusfunction, key="default", textcolor=pygame.color.THECOLORS["black"]):
+    def __init__(self, hasfocus, keydict, key, font, pos, w, h, bordercolor, bordercolorhover, backgroundcoloractive, backgroundcolorinactive, keychangedfunction, lostfocusfunction, textcolor=pygame.color.THECOLORS["black"]):
         self.font = font
         self.textcolor = textcolor
         self.maxtextlength = 1
 
-        #key for settings values
+        self.keydict = keydict
+
+        #key for dict values
         self.key = key
         #int value of the current key
-        self.keyvalue = initialkey
-
-        self.excludekeys = excludekeys
+        self.keyvalue = self.keydict[self.key]
 
         self.text = ""
         self.settext()
@@ -26,6 +27,8 @@ class keycapture:
 
         #colors
         self.bordercolor = bordercolor
+        self.bordercolordefualt = bordercolor
+        self.bordercolorhover = bordercolorhover
         self.inactivecolorbackground = backgroundcolorinactive
         self.activecolorbackground = backgroundcoloractive
 
@@ -56,23 +59,24 @@ class keycapture:
         self.textsurface = self.font.render(text, True, self.textcolor)
         self.textsurfacerect = self.textsurface.get_rect()
 
+    def _changefocus(self, value):
+        if self.hasfocus != value:
+            self.hasfocus = value
+
+            if not self.hasfocus:
+                if self.lostfocusfunction != None:
+                    self.lostfocusfunction(self)
+
     #keydown event handler
     def eventhandler(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.hasfocus = True
-            else:
-                self.hasfocus = False
-                if self.lostfocusfunction != None:
-                    self.lostfocusfunction(self)
+            self._changefocus(self.rect.collidepoint(event.pos))
             return True
         # if text box has foxus and
         if event.type == pygame.KEYDOWN and self.hasfocus:
             if event.key == pygame.K_RETURN:
-                self.hasfocus = False
-                if self.lostfocusfunction != None:
-                    self.lostfocusfunction(self)
-            elif not event.key in self.excludekeys and event.key != self.keyvalue:
+                self._changefocus(False)
+            elif not event.key in self.keydict.values() and event.key != self.keyvalue:
                 self.keyvalue = event.key
                 self.settext()
                 if self.keychangedfunction != None:
@@ -83,7 +87,12 @@ class keycapture:
             self.rendertext(self.text)
 
     def update(self):
-        #everything handled in eventhandler
+        mousepos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(mousepos):
+            self.bordercolor = self.bordercolorhover
+        else:
+            self.bordercolor = self.bordercolordefualt
         return
 
     def draw(self, screen):

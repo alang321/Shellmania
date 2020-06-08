@@ -7,6 +7,11 @@ from ui.numbox import numbox
 class settingsscene:
     nextscene = None
 
+    #all keycaptures objkects that are created, ["text", "key"]
+    keycaptureitems = [["Move left", "Left"], ["Move right", "Right"], ["Next item", "Next"], ["Previous item", "Previous"]]
+
+    #restart
+
     # TODO: implement this class, probably settings tabs
 
     def __init__(self, screen, background, settings):
@@ -24,7 +29,7 @@ class settingsscene:
         self.background = background
 
         self.buttonlist = []
-        self.keycapturelist = []
+        self.eventcaptureobjectslist = []
 
         # ui element height and width
         self.uiheight = self.screensize[1]*0.059
@@ -50,6 +55,7 @@ class settingsscene:
         self.backkey = settings.playerkeys["Quit"]
 
         self._createbuttons()
+        self._createkeycaptures()
         self._startloop()
         return
 
@@ -64,15 +70,18 @@ class settingsscene:
                                 self.bordercolorhovering, self.bordercolor, self._valuechanged)
         self.buttonlist.append(checkbox1)
 
-        buttoncapturetest = keycapture(False, self.settings.playerkeys["Left"], [self.settings.playerkeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
-                              self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
-                              self.textboxinactivecolor, self._keychanged, None)
-        self.keycapturelist.append(buttoncapturetest)
 
         namenumbox = numbox(False, False, 5, self.textboxfont, [self.screensize[0]/2, 200], self.uiwidth,
-                              self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
+                              self.uiheight, self.textboxbordercolor, self.hovercolor, self.textboxactivecolor,
                               self.textboxinactivecolor, 2, 10, self._intchanged)
-        self.keycapturelist.append(namenumbox)
+        self.eventcaptureobjectslist.append(namenumbox)
+
+    def _createkeycaptures(self):
+        for i, listitem in enumerate(self.keycaptureitems, start=1):
+            keycaptureobject = keycapture(False, self.settings.playerkeys, listitem[1], self.textboxfont, [self.screensize[0]/2, 50*i], self.uiwidth,
+                                  self.uiheight, self.textboxbordercolor, self.hovercolor, self.textboxactivecolor,
+                                  self.textboxinactivecolor, None, self._keychanged)
+            self.eventcaptureobjectslist.append(keycaptureobject)
 
     def _intchanged(self, object):
         print(object.key, "        ", object.value)
@@ -82,8 +91,8 @@ class settingsscene:
             i.update()
             i.draw(self.screen)
 
-    def _drawkeycaptures(self):
-        for i in self.keycapturelist:
+    def _draweventcaptureobjects(self):
+        for i in self.eventcaptureobjectslist:
             i.update()
             i.draw(self.screen)
 
@@ -106,14 +115,14 @@ class settingsscene:
                     if event.type == pygame.KEYUP and event.key == self.backkey:
                         self._goback(None)
                     else:
-                        for i in self.keycapturelist:
+                        for i in self.eventcaptureobjectslist:
                             i.eventhandler(event)
                     pass
 
                 # draw
                 self.background.draw(self.screen)
                 self._drawbuttons()
-                self._drawkeycaptures()
+                self._draweventcaptureobjects()
 
                 # display screen surface
                 pygame.display.flip()
@@ -127,3 +136,8 @@ class settingsscene:
 
     def _keychanged(self, object):
         print(object.key, "changed key new key", object.keyvalue)
+
+        object.keydict[object.key] = object.keyvalue
+        self.settings.updatesettingsfile()
+
+        print("updated settings for ", object.key)

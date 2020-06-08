@@ -3,23 +3,23 @@ import pygame
 # todo : implement
 
 class numbox:
-    def __init__(self, isint, hasfocus, initialval, font, pos, w, h, bordercolor, backgroundcoloractive, backgroundcolorinactive, minvalue, maxvalue, lostfocusfunction, key="default", textcolor=pygame.color.THECOLORS["black"], maxtextlength=6):
-        #Button text
-        self.text = str(initialval)
+    def __init__(self, isint, hasfocus, initialval, font, pos, w, h, bordercolor, bordercolorhover, backgroundcoloractive, backgroundcolorinactive, minvalue, maxvalue, lostfocusfunction, key="default", textcolor=pygame.color.THECOLORS["black"], maxtextlength=5):
+        self.isint = isint
+        if self.isint:
+            self.convert = int
+        else:
+            self.convert = float
 
+        #convert value to specified data type
+        self.value = self.convert(initialval)
 
-        self.value = initialval
+        self.text = str(self.value)
 
         self.font = font
         self.textcolor = textcolor
 
         self.maxtextlength = maxtextlength
 
-        self.isint = isint
-        if self.isint:
-            self.convert = int
-        else:
-            self.convert = float
 
         self.minval = self.convert(minvalue)
         self.maxval = self.convert(maxvalue)
@@ -38,6 +38,8 @@ class numbox:
 
         #colors
         self.bordercolor = bordercolor
+        self.bordercolordefualt = bordercolor
+        self.bordercolorhover = bordercolorhover
         self.inactivecolorbackground = backgroundcolorinactive
         self.activecolorbackground = backgroundcoloractive
 
@@ -75,7 +77,7 @@ class numbox:
             if not self.hasfocus:
                 if not self.minval <= self.value <= self.maxval:
                     self.value = self.minval
-                    self.text = str(self.value)
+                self.text = str(self.value)
 
                 self.rendertext(self.text)
                 if self.lostfocusfunction != None:
@@ -101,7 +103,12 @@ class numbox:
             self.rendertext(self.text)
 
     def update(self):
-        #everything handled in eventhandler
+        mousepos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(mousepos):
+            self.bordercolor = self.bordercolorhover
+        else:
+            self.bordercolor = self.bordercolordefualt
         return
 
     def draw(self, screen):

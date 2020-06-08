@@ -108,7 +108,7 @@ class playercreationscene:
                 #deactivate previous textbox
                 self.textboxlist[-1].hasfocus = False
 
-            nametextbox = textbox(True, "", self.textboxfont, [self.textboxxpos, ypos], self.textboxwidth, self.textboxheight, self.textboxbordercolor, self.textboxactivecolor, self.textboxinactivecolor, None, None)
+            nametextbox = textbox(True, "", self.textboxfont, [self.textboxxpos, ypos], self.textboxwidth, self.textboxheight, self.textboxbordercolor, self.hovercolor, self.textboxactivecolor, self.textboxinactivecolor, None, None)
             nametextbox.rendertext("Enter name...")
             self.textboxlist.append(nametextbox)
 

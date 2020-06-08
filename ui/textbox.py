@@ -1,7 +1,7 @@
 import pygame
 
 class textbox:
-    def __init__(self, hasfocus, text, font, pos, w, h, bordercolor, backgroundcoloractive, backgroundcolorinactive, textchangedfunction, lostfocusfunction, maxtextlength=11, key="default", textcolor=pygame.color.THECOLORS["black"]):
+    def __init__(self, hasfocus, text, font, pos, w, h, bordercolor, bordercolorhover, backgroundcoloractive, backgroundcolorinactive, textchangedfunction, lostfocusfunction, maxtextlength=11, key="default", textcolor=pygame.color.THECOLORS["black"]):
         #Button text
         self.text = text
         self.font = font
@@ -22,6 +22,8 @@ class textbox:
 
         #colors
         self.bordercolor = bordercolor
+        self.bordercolordefualt = bordercolor
+        self.bordercolorhover = bordercolorhover
         self.inactivecolorbackground = backgroundcolorinactive
         self.activecolorbackground = backgroundcoloractive
 
@@ -71,7 +73,12 @@ class textbox:
         return False
 
     def update(self):
-        #everything handled in eventhandler
+        mousepos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(mousepos):
+            self.bordercolor = self.bordercolorhover
+        else:
+            self.bordercolor = self.bordercolordefualt
         return
 
     def draw(self, screen):

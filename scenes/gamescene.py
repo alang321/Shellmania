@@ -4,6 +4,7 @@ from background import background as generatebackground
 from terrain import terrain
 import random
 from wind import windforce
+from ui.button import button
 
 class gamescene:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["purple"], pygame.color.THECOLORS["green"]]
@@ -17,6 +18,8 @@ class gamescene:
         self.arguments = []
         #settingsfile
         self.settings = settings
+
+        self.running = True
 
         #screen
         self.screen = screen
@@ -34,6 +37,15 @@ class gamescene:
         # players, missiles, particles
         self.entities = [[], [], []]
         self.aliveplayers = []
+        self.buttons = []
+
+        #button colors
+        self.buttoncolor = settings.design["Button color"]
+        self.hovercolor = settings.design["Button hover color"]
+        self.pressedcolor = settings.design["Button pressed color"]
+        self.inactivecolor = settings.design["Button inactive color"]
+        self.uiheight = self.screensize[1]*0.059
+        self.uiwidth = self.screensize[0]*0.3
 
         #wind
         self.maxwind = 3.0
@@ -84,6 +96,9 @@ class gamescene:
         #random spawn order
         random.shuffle(self.entities[0])
 
+        #delete all buttons
+        self.buttons = []
+
         self.aliveplayers.clear()
         #respawn players
         for i in range(len(self.entities[0])):
@@ -117,16 +132,14 @@ class gamescene:
         t0 = 0.001 * pygame.time.get_ticks()
         maxdt = 0.5
 
-        running = True
-
-        while running:
+        while self.running:
             self.elapsedtime = 0.001 * pygame.time.get_ticks()
             dt = min(self.elapsedtime - t0, maxdt)
             if dt > 0.:
                 t0 = self.elapsedtime
 
                 # event handling
-                running = self._eventhandling(pygame.event.get())
+                self.running = self._eventhandling(pygame.event.get())
 
                 #update turn and win loose stuff
                 self._turnlogic()
@@ -136,6 +149,7 @@ class gamescene:
                 self.gameTerrain.draw(self.screen)
                 self._drawEntities(self.screen, self.entities, dt)
                 self._drawText(self.screen)
+                self._drawButtons(self.screen)
 
                 #display screen surface
                 pygame.display.flip()
@@ -148,9 +162,6 @@ class gamescene:
                 exit()
             elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Quit"]:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Newround"]:
-                if self.gamestate != self.gamestates["round"]:
-                    self.restart()
             elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.settings.playerkeys["Fire"]: # start shot
                 if self.currentplayer.shotcounter < self.shotlimit:
                     self.currentplayer.firekeyevent(event.type, self.elapsedtime)
@@ -174,12 +185,14 @@ class gamescene:
             return
 
         elif len(self.aliveplayers) <= 1: #switch gamestate and add win if playersalive is less or equal than 1
-            if len(self.aliveplayers) == 1:
+            #because the last active palyer isnt removed immediately from the list
+            if not self.aliveplayers[0].destroyed:
                 self.gamestate = self.gamestates["win"]
                 self.aliveplayers[0].controlActive = False
                 self.aliveplayers[0].wins += 1
-            if len(self.aliveplayers) == 0:
+            else:
                 self.gamestate = self.gamestates["draw"]
+            self._creategameoverbuttons()
 
         elif self.currentplayer.destroyed: #switch to next alive player if current is destroyed
             #get currentindex
@@ -232,6 +245,11 @@ class gamescene:
 
             for i in entitylist:
                 i.draw(screen)
+
+    def _drawButtons(self, screen):
+        for i in self.buttons:
+            i.update()
+            i.draw(screen)
 
     def _drawText(self, screen):
         if self.gamestate == self.gamestates["round"]:
@@ -287,8 +305,8 @@ class gamescene:
                 pygame.draw.rect(screen, self.background.backgroundcolor, (
                 (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2,
-                 textsurface.get_rect().h + self.boxmargin * 2)), 3)
-                pygame.draw.rect(screen, pygame.color.THECOLORS["white"], (
+                 textsurface.get_rect().h + self.boxmargin * 2)))
+                pygame.draw.rect(screen, self.buttoncolor, (
                 (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2,
                  textsurface.get_rect().h + self.boxmargin * 2)), 3)
@@ -310,10 +328,37 @@ class gamescene:
                 #draw boxes
                 pygame.draw.rect(screen, self.background.backgroundcolor, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)))
-                pygame.draw.rect(screen, self.aliveplayers[0].color, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                pygame.draw.rect(screen, self.buttoncolor, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)), 3)
                 #draw text
                 screen.blit(textsurface, (self.screensize[0]/2-textsurface.get_rect().w/2, y1))
                 screen.blit(textsurface2, (self.screensize[0]/2-textsurface2.get_rect().w/2, y2))
                 screen.blit(textsurface3, (self.screensize[0]/2-textsurface3.get_rect().w/2, y3))
+
+
+    def _creategameoverbuttons(self):
+        if self.gamestate == self.gamestates["draw"]:
+            ypos = self.screensize[1] * 0.5
+        else:
+            ypos = self.screensize[1] * 0.7
+
+        self.buttons.append(
+            button("Restart", self.font, [self.screensize[0] / 2, ypos], self.uiwidth * 0.8, self.uiheight,
+                   self.buttoncolor, self.hovercolor,
+                   self.pressedcolor, self.inactivecolor, self._restartbuttonpressed))
+
+        self.buttons.append(
+            button("Main menu", self.font, [self.screensize[0] / 2, ypos+self.uiheight*1.2], self.uiwidth * 0.8, self.uiheight,
+                   self.buttoncolor, self.hovercolor,
+                   self.pressedcolor, self.inactivecolor, self._returnmainmenu))
+
+    #gets called when the restart button is pressed
+    def _restartbuttonpressed(self, object):
+        self.restart()
+
+    # gets called when the restart button is pressed
+    def _returnmainmenu(self, object):
+        self.running = False
+
+
 
