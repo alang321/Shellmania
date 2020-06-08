@@ -12,7 +12,7 @@ class mainmenuscene:
 
         self.running = True
 
-        self.screensize = settings.gamevalues["Resolution"]
+        self.screensize = screen.get_size()
 
         self.buttonfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.042), 12))
 
@@ -40,7 +40,7 @@ class mainmenuscene:
         offsetcenter = self.screensize[1]*0.07
         height = self.screensize[1]*0.059
         width = self.screensize[0]*0.3
-        marginbetween = height * 0.2
+        marginbetween = height * 0.3
 
         startbutton = button("Start", self.buttonfont, [self.screensize[0]/2, self.screensize[1]/2+offsetcenter], width, height,
                                 self.buttoncolor, self.hovercolor,

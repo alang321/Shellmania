@@ -11,7 +11,7 @@ class playercreationscene:
         self.screen = screen
 
         self.running = True
-        self.screensize = settings.gamevalues["Resolution"]
+        self.screensize = screen.get_size()
 
         self.font = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.042), 12))
 

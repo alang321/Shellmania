@@ -1,11 +1,15 @@
 import pygame
 
 class checkbox:
-    def __init__(self, checked, font, pos, dimension, color, bordercolor, bordercolorhovering, checkmarkcolor, valuechangedfunction, key="default",active=True, textcolor=pygame.color.THECOLORS["black"]):
-        #checked
-        self.checked = checked
+    def __init__(self, keydict, key, pos, dimension, color, bordercolor, bordercolorhovering, checkmarkcolor, valuechangedfunction):
 
+
+
+        self.keydict = keydict
+        #key for dict values
         self.key = key
+        # checked
+        self.checked = self.keydict[self.key]
 
         #button box
         self.pos = pos
@@ -66,3 +70,7 @@ class checkbox:
         if self.checked:
             #draw the checkmark
             pygame.draw.rect(screen, self.checkmarkcolor, self.checkmarkrect)
+
+    def valuefromfile(self):
+        self.checked = self.keydict[self.key]
+        return

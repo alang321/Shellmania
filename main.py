@@ -15,15 +15,13 @@ class main:
         pygame.font.init()
         pygame.mixer.init()
 
-        self.screensize = self.settings.gamevalues["Resolution"]
-
         # screen
         if self.settings.gamevalues["Fullscreen"]:
-            self.screen = pygame.display.set_mode(self.screensize, pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode(self.settings.gamevalues["Resolution"], pygame.FULLSCREEN)
         else:
-            self.screen = pygame.display.set_mode(self.screensize)
+            self.screen = pygame.display.set_mode(self.settings.gamevalues["Resolution"])
 
-        self.background = background(self.screensize, (19, 19, 39, 255))
+        self.background = background(self.settings.gamevalues["Resolution"], (19, 19, 39, 255))
 
         self.defaultscene = mainmenuscene
 

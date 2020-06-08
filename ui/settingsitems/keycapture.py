@@ -1,32 +1,21 @@
 import pygame
 
-# todo : implement
-
-class numbox:
-    def __init__(self, isint, hasfocus, initialval, font, pos, w, h, bordercolor, bordercolorhover, backgroundcoloractive, backgroundcolorinactive, minvalue, maxvalue, lostfocusfunction, key="default", textcolor=pygame.color.THECOLORS["black"], maxtextlength=5):
-        self.isint = isint
-        if self.isint:
-            self.convert = int
-        else:
-            self.convert = float
-
-        #convert value to specified data type
-        self.value = self.convert(initialval)
-
-        self.text = str(self.value)
-
+#gets a keyinput if it has focus, doesnt set it just gets it
+class keycapture:
+    def __init__(self, keydict, key, hasfocus, font, pos, w, h, bordercolor, bordercolorhover, backgroundcoloractive, backgroundcolorinactive, keychangedfunction, lostfocusfunction, textcolor=pygame.color.THECOLORS["black"]):
         self.font = font
         self.textcolor = textcolor
+        self.maxtextlength = 1
 
-        self.maxtextlength = maxtextlength
+        self.keydict = keydict
 
-
-        self.minval = self.convert(minvalue)
-        self.maxval = self.convert(maxvalue)
-
-        self.rendertext(self.text)
-
+        #key for dict values
         self.key = key
+        #int value of the current key
+        self.keyvalue = self.keydict[self.key]
+
+        self.text = ""
+        self.settext()
 
         #text box
         self.pos = pos
@@ -44,9 +33,13 @@ class numbox:
         self.activecolorbackground = backgroundcoloractive
 
         #function that is called when button is pressed
+        self.keychangedfunction = keychangedfunction
         self.lostfocusfunction = lostfocusfunction
 
         self.delete = False
+
+        #whether the last input was wrong, as in exluded or self
+        self.lastinputerror = False
 
         self.hasfocus = hasfocus
 
@@ -54,32 +47,23 @@ class numbox:
         #if the mousebutton down is pressed, calls function if mousebutton one is released still on button
         self.clicked = False
 
+    def settext(self):
+        if self.keyvalue != None:
+            self.text = pygame.key.name(self.keyvalue)
+        else:
+            self.text = ""
+
+        self.rendertext(self.text)
+
     def rendertext(self, text):
         self.textsurface = self.font.render(text, True, self.textcolor)
         self.textsurfacerect = self.textsurface.get_rect()
-
-    def _converttext(self, text):
-        try:
-            value = self.convert(text)
-
-            if value <= self.maxval:
-                self.value = value
-                return True
-            else:
-                return False
-        except:
-            return False
 
     def _changefocus(self, value):
         if self.hasfocus != value:
             self.hasfocus = value
 
             if not self.hasfocus:
-                if not self.minval <= self.value <= self.maxval:
-                    self.value = self.minval
-                self.text = str(self.value)
-
-                self.rendertext(self.text)
                 if self.lostfocusfunction != None:
                     self.lostfocusfunction(self)
 
@@ -87,19 +71,19 @@ class numbox:
     def eventhandler(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self._changefocus(self.rect.collidepoint(event.pos))
-        # if text box has foxus and
+            return True
+        # if text box has focus and
         if event.type == pygame.KEYDOWN and self.hasfocus:
             if event.key == pygame.K_RETURN:
                 self._changefocus(False)
-            elif event.key == pygame.K_BACKSPACE:
-                self.text = self.text[:-1]
-                self._converttext(self.text)
+            elif not event.key in self.keydict.values() and event.key != self.keyvalue:
+                self.keyvalue = event.key
+                self.settext()
+                if self.keychangedfunction != None:
+                    self.keychangedfunction(self)
+                self.lastinputerror = False
             else:
-                if len(self.text) < self.maxtextlength:
-                    text = self.text
-                    text += event.unicode
-                    if self._converttext(text):
-                        self.text += event.unicode
+                self.lastinputerror = True
             self.rendertext(self.text)
 
     def update(self):
@@ -112,7 +96,13 @@ class numbox:
         return
 
     def draw(self, screen):
-        #switch color to current state color, clicked before hovering
+
+        if self.lastinputerror and self.hasfocus:
+            bordercolor = pygame.color.THECOLORS["red"]
+        else:
+            self.lastinputerror = False
+            bordercolor = self.bordercolor
+
         if self.hasfocus:
             color = self.activecolorbackground
         else:
@@ -120,8 +110,13 @@ class numbox:
 
         #draw button rect
         self.textbox.fill(color)
-        pygame.draw.rect(self.textbox, self.bordercolor, self.borderrect, 2)
+        pygame.draw.rect(self.textbox, bordercolor, self.borderrect, 2)
         screen.blit(self.textbox, (self.pos[0]-self.rect.w/2, self.pos[1]-self.rect.h/2))
 
         #draw text
         screen.blit(self.textsurface, (self.pos[0]-self.textsurfacerect.w/2, self.pos[1]-self.textsurfacerect.h/2))
+
+    def valuefromfile(self):
+        self.keyvalue = self.keydict[self.key]
+        self.settext()
+        return

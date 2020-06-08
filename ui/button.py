@@ -1,7 +1,7 @@
 import pygame
 
 class button:
-    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, active=True, textcolor=pygame.color.THECOLORS["black"]):
+    def __init__(self, text, font, pos, w, h, color, hoveringcolor, clickedcolor, inactivecolor, function, passingvalue=None, active=True, textcolor=pygame.color.THECOLORS["black"]):
         #Button text
         self.text = text
         self.textsurface = font.render(text, True, textcolor)
@@ -9,6 +9,9 @@ class button:
 
         #if button is active
         self.active = active
+
+        #value to use to pass data
+        self.passingvalue = passingvalue
 
         #button box
         self.pos = pos

@@ -23,7 +23,7 @@ class gamescene:
 
         #screen
         self.screen = screen
-        self.screensize = self.settings.gamevalues["Resolution"]
+        self.screensize = screen.get_size()
 
         # background
         self.background = generatebackground(self.screensize, (19, 19, 39, 255))
@@ -259,10 +259,10 @@ class gamescene:
             screen.blit(textsurface, (self.marginside, self.margintop))
 
             #draw wind text
-            if self.maxwind == 0:
+            if self.wind.max == 0:
                 text = str(round(0.0, 1))
             else:
-                text = str(abs(round((self.wind.force.x/self.maxwind)*10, 1)))
+                text = str(abs(round((self.wind.force.x/(self.wind.max/100))*10, 1)))
             textsurface = self.font.render(text, False, self.currentplayer.color)
             screen.blit(textsurface, (self.screensize[0]-self.marginside-textsurface.get_rect().w, self.margintop))
 

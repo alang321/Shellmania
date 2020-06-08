@@ -63,7 +63,7 @@ class player:
         self.shootingstarttime = 0.0
         self.minshotpower = 0.1
         self.shotcharging = False
-        self.fullpowershottime = 1.1  # time to charge full power shot in seconds
+        self.fullpowershottime = self.settings.gamevalues["Fullpower shot time"] # time to charge full power shot in seconds
 
         # player name font
         self.font = pygame.font.SysFont('Calibri', 11)
