@@ -2,6 +2,7 @@ import pygame
 from ui.button import button
 from ui.checkbox import checkbox
 from ui.keycapture import keycapture
+from ui.numbox import numbox
 
 class settingsscene:
     nextscene = None
@@ -46,7 +47,7 @@ class settingsscene:
 
         self.textboxfont = pygame.font.SysFont(settings.design["Font type"], max(int(self.screensize[1]*0.033), 12))
 
-        self.backkey = settings.gamekeys["Quit"]
+        self.backkey = settings.playerkeys["Quit"]
 
         self._createbuttons()
         self._startloop()
@@ -63,10 +64,18 @@ class settingsscene:
                                 self.bordercolorhovering, self.bordercolor, self._valuechanged)
         self.buttonlist.append(checkbox1)
 
-        buttoncapturetest = keycapture(True, self.settings.playerkeys["Left"], [self.settings.gamekeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
+        buttoncapturetest = keycapture(False, self.settings.playerkeys["Left"], [self.settings.playerkeys["Quit"]], self.textboxfont, [self.screensize[0]/2, 50], self.uiwidth,
                               self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
                               self.textboxinactivecolor, self._keychanged, None)
         self.keycapturelist.append(buttoncapturetest)
+
+        namenumbox = numbox(False, False, 5, self.textboxfont, [self.screensize[0]/2, 200], self.uiwidth,
+                              self.uiheight, self.textboxbordercolor, self.textboxactivecolor,
+                              self.textboxinactivecolor, 2, 10, self._intchanged)
+        self.keycapturelist.append(namenumbox)
+
+    def _intchanged(self, object):
+        print(object.key, "        ", object.value)
 
     def _drawbuttons(self):
         for i in self.buttonlist:
@@ -117,4 +126,4 @@ class settingsscene:
         print(object.key, " value is now ", object.checked)
 
     def _keychanged(self, object):
-        print(object.key,"changed key new key", object.keyvalue)
+        print(object.key, "changed key new key", object.keyvalue)

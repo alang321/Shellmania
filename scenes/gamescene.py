@@ -146,9 +146,9 @@ class gamescene:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Quit"]:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Quit"]:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == self.settings.gamekeys["Newround"]:
+            elif event.type == pygame.KEYDOWN and event.key == self.settings.playerkeys["Newround"]:
                 if self.gamestate != self.gamestates["round"]:
                     self.restart()
             elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key == self.settings.playerkeys["Fire"]: # start shot
@@ -284,7 +284,7 @@ class gamescene:
                 text = "Draw"
                 textsurface = self.winnerfont.render(text, False, pygame.color.THECOLORS["white"])
                 y1 = self.screensize[1]/2-self.offsetfromcenter
-                pygame.draw.rect(screen, (19, 19, 39, 255), (
+                pygame.draw.rect(screen, self.background.backgroundcolor, (
                 (self.screensize[0] / 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2,
                  textsurface.get_rect().h + self.boxmargin * 2)), 3)
@@ -308,7 +308,7 @@ class gamescene:
                 y3 = y2 + textsurface2.get_rect().h+self.subtextmargin
 
                 #draw boxes
-                pygame.draw.rect(screen, (19, 19, 39, 255), ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
+                pygame.draw.rect(screen, self.background.backgroundcolor, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)))
                 pygame.draw.rect(screen, self.aliveplayers[0].color, ((self.screensize[0]/ 2 - textsurface.get_rect().w / 2 - self.boxmargin, y1 - self.boxmargin),
                 (textsurface.get_rect().w + self.boxmargin * 2, y3 - y1 + textsurface3.get_rect().h + self.boxmargin*2)), 3)

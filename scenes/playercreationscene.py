@@ -51,7 +51,7 @@ class playercreationscene:
         self.textboxwidth = self.uiwidth
         self.textboxmargin = (self.textlistheight-self.textboxheight*self.maxplayers)/(self.maxplayers-1)
 
-        self.backkey = settings.gamekeys["Quit"]
+        self.backkey = settings.playerkeys["Quit"]
 
         #0.75 is textbox
 

@@ -2,17 +2,15 @@ import pygame
 
 class gamesettings:
     #default values
-    _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE}
-    _gamekeys = {'Quit':pygame.K_ESCAPE, 'Newround':pygame.K_RETURN}
-    _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1, 'Enable fuel': False, 'Reset fuel':True, 'Initial fuel':10.0, 'Max turret angle':85.0, 'Player speed':45.0}
+    _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE, 'Quit':pygame.K_ESCAPE, 'Newround':pygame.K_RETURN}
+    _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1, 'Enable fuel': True, 'Reset fuel':False, 'Initial fuel':10.0, 'Max turret angle':85.0, 'Player speed':45.0}
     _design = {'Button color':[210,206,194,255], 'Button hover color':[242,190,28,255], 'Button pressed color':list(pygame.color.THECOLORS["orange"]), 'Button inactive color':list(pygame.color.THECOLORS["red"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':[130,130,130], 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Title color':[242,190,28,255], 'Font type':'Calibri', 'Font type title':'Calibri'}
     _misc = {'Game title': "Placeholder"}
 
 
-    _sections = {'playerkeys': 0, 'gamekeys': 1, 'values': 2, 'design':3, 'misc':4}
+    _sections = {'playerkeys': 0, 'values': 1, 'design':2, 'misc':3}
 
     _values = [_playerkeys,
-               _gamekeys,
                _gamevalues,
                _design,
                _misc]
@@ -31,10 +29,9 @@ class gamesettings:
 
         #for easier access
         self.playerkeys = self.values[0]
-        self.gamekeys = self.values[1]
-        self.gamevalues = self.values[2]
-        self.design = self.values[3]
-        self.misc = self.values[4]
+        self.gamevalues = self.values[1]
+        self.design = self.values[2]
+        self.misc = self.values[3]
 
     #resets the savefile with default values
     def reset(self):
