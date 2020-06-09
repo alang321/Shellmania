@@ -49,7 +49,8 @@ class player:
         self.color = color
         self.name = name
         #helath from 0 to 1
-        self.health = 1.0
+        self.initialhealth = self.settings.gamevalues["Initial health"]
+        self.health = self.initialhealth
 
         #counters
         self.shotcounter = 0
@@ -99,6 +100,9 @@ class player:
         #text
         self.textsurface = self.font.render(self.name, False, self.color)
 
+        #wether or not palyer has infinite nukes
+        self.infinitenukes = self.settings.gamevalues["Infinite nukes"]
+
         #toggles
         self.drawToggle = True
         self.delete = False
@@ -115,7 +119,7 @@ class player:
         self.fuel = self.initialfuel
 
         self.kills = 0
-        self.health = 1.0
+        self.health = self.initialhealth
         self.controlActive = False
         self.left = False
         self.right = False
@@ -126,6 +130,8 @@ class player:
         #inventory
         self.inventory = player._defaultinventory.copy()
         self.inventory.owner = self
+        if self.infinitenukes:
+            self.inventory.addtoitemamount(nuke, -1)
 
         #set tank on ground and update turret vector
         self.setonground()
@@ -197,7 +203,7 @@ class player:
 
                 #health bar
                 pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26, 4)), 1)
-                pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health, 0.0), 4)))
+                pygame.draw.rect(screen, self.color, ((self.pos[0]-13, self.pos[1]-33), (26*max(self.health/self.initialhealth, 0.0), 4)))
 
                 screen.blit(self.textsurface, (self.pos[0]-self.textsurface.get_rect().w/2, self.pos[1]-50))
         return

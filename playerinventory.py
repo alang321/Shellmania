@@ -93,7 +93,7 @@ class playerinventory:
             index = self.items.index(item)
             if self.amounts[index] >= 0:
                 self.amounts[index] += amount
-            self.pickupparticle(item, amount)
+                self.pickupparticle(item, amount)
         else:
             self.newitem(item, amount)
 
