@@ -343,12 +343,12 @@ class gamescene:
             ypos = self.screensize[1] * 0.7
 
         self.buttons.append(
-            button("Restart", self.font, [self.screensize[0] / 2, ypos], self.uiwidth * 0.8, self.uiheight,
+            button("Next round", self.font, [self.screensize[0] / 2, ypos], self.uiwidth * 0.8, self.uiheight,
                    self.buttoncolor, self.hovercolor,
                    self.pressedcolor, self.inactivecolor, self._restartbuttonpressed))
 
         self.buttons.append(
-            button("Main menu", self.font, [self.screensize[0] / 2, ypos+self.uiheight*1.2], self.uiwidth * 0.8, self.uiheight,
+            button("Main menu", self.font, [self.screensize[0] / 2, ypos+self.uiheight*1.3], self.uiwidth * 0.8, self.uiheight,
                    self.buttoncolor, self.hovercolor,
                    self.pressedcolor, self.inactivecolor, self._returnmainmenu))
 

@@ -44,7 +44,7 @@ class nuke:
     def draw(self, screen):
         #rotate the sprite in the direcction of the velocity vector
         rotated = pygame.transform.rotate(self.sprite, np.rad2deg(self.velocity.find360CCWAngle(Vector2d(0.0, 1.0))))
-        screen.blit(rotated, [self.pos[0] - (self.rect.w / 2), self.pos[1] - self.rect.h / 2])
+        screen.blit(rotated, (self.pos[0] - rotated.get_rect().w / 2.0, self.pos[1] - rotated.get_rect().h / 2.0))
 
     def update(self, dt):
         #this list holds all the forces acting on the missile
