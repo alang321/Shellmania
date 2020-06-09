@@ -5,10 +5,8 @@ from background import background
 
 class placeholder:
     #path for the settings
-    settingspath = "./settings.txt"
-
-    def __init__(self):
-        self.settings = gamesettings(self.settingspath)
+    def __init__(self, settingspath):
+        self.settings = gamesettings(settingspath)
 
         # initialize pygame
         pygame.init()
@@ -26,8 +24,6 @@ class placeholder:
         self.defaultscene = mainmenuscene
 
         self.currentscene = self.defaultscene
-
-
 
         self.sceneswitcher()
 

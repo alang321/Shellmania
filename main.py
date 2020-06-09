@@ -8,4 +8,4 @@ from placeholder import placeholder
 
 # get a nuke by getting a kill (or switch to infinite in settings)
 
-placeholder()
+placeholder("./settings.txt")

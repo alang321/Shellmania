@@ -153,6 +153,5 @@ class settingstabs:
         return
 
     def _dropdownitemchanged(self, object):
-        print(object.item)
         object.keydict[object.key] = object.item
         self.settings.updatesettingsfile()

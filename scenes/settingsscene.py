@@ -65,9 +65,6 @@ class settingsscene:
                                 self.pressedcolor, self.inactivecolor, self._goback)
         self.buttons.append(backbutton)
 
-    def _intchanged(self, object):
-        print(object.key, "        ", object.value)
-
     def _drawnoeventobjects(self):
         for i in self.settingspages.noeventobjects:
             i.update()
@@ -122,14 +119,3 @@ class settingsscene:
     def _goback(self, object):
         self.nextscene = None
         self.running = False
-
-    def _valuechanged(self, object):
-        print(object.key, " value is now ", object.checked)
-
-    def _keychanged(self, object):
-        print(object.key, "changed key new key", object.keyvalue)
-
-        object.keydict[object.key] = object.keyvalue
-        self.settings.updatesettingsfile()
-
-        print("updated settings for ", object.key)
