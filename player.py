@@ -64,6 +64,7 @@ class player:
         self.minshotpower = 0.1
         self.shotcharging = False
         self.fullpowershottime = self.settings.gamevalues["Fullpower shot time"] # time to charge full power shot in seconds
+        self.shootingratio = self.settings.gamevalues["Shot power"]
 
         # player name font
         self.font = pygame.font.SysFont('Calibri', 11)
@@ -249,7 +250,7 @@ class player:
             weapon = self.inventory.usecurrent(True)
             if weapon != None:
                 self.shotcounter += 1
-                weapon(self.turretEndpoint.copy(), self.turretVector.copy(), 22.0*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
+                weapon(self.turretEndpoint.copy(), self.turretVector.copy(), self.terrain.bounds[0]*0.02*self.shootingratio*shootingpower, self.terrain, self.wind, self.entities, self, 1.0, self.color)
                 particle(self.turretEndpoint.copy(), self.fireorange, 0.5, self.turretVector.copy(), 1.5, 1.0, self.entities[2], True)
 
     #substract damage from health, if helath nis les than 0 set to destroyed

@@ -3,6 +3,7 @@ from ui.settingsitems.checkbox import checkbox
 from ui.settingsitems.keycapture import keycapture
 from ui.settingsitems.numbox import numbox
 from ui.settingsitems.label import label
+from ui.settingsitems.dropdownmenu import dropdownmenu
 
 
 #not very pretty code, but really wanted to get done at this point
@@ -26,6 +27,11 @@ class settingstabs:
 
         self.index = 0
 
+        #maximum item amount of a single tab
+        self.maxlength = 0
+        for itemlist in itemarray:
+            self.maxlength = max(len(itemlist), self.maxlength)
+
 
         #button colors
         self.buttoncolor = settings.design["Button color"]
@@ -37,7 +43,7 @@ class settingstabs:
         self.checkboxcolor = settings.design["Textbox active color"]
 
         self.buttonwidth = self.uiwidth * 0.18
-        self.inputfieldwidth = self.uiwidth * 0.18
+        self.inputfieldwidth = self.uiwidth * 0.2
 
         #textboxcolors
         self.textboxactivecolor = settings.design["Textbox active color"]
@@ -84,7 +90,8 @@ class settingstabs:
         self.tabbuttons[0].active = False
 
         #create reset button
-        self.buttons.append(button("Reset", self.font, [self.pos[0] + self.uiwidth, self.pos[1]], self.buttonwidth,
+        ypos = self.pos[1] + (self.uiheight + self.uimarginbetween) * (self.maxlength + 1)
+        self.buttons.append(button("Reset", self.font, [self.pos[0] + self.uiwidth/2, ypos], self.buttonwidth,
                self.uiheight,
                self.buttoncolor, self.hovercolor,
                self.pressedcolor, self.labelcolor, self._resetsettings))
@@ -140,4 +147,12 @@ class settingstabs:
         self.settings.updatesettingsfile()
 
     def _appenddropdown(self, ypos, item, index):
+        self.noeventobjectslist[index].append(dropdownmenu(self.settings.values[item[0]], item[3], item[4], self.font, [self.pos[0]+self.uiwidth, ypos], self.inputfieldwidth*1.2,
+                              self.uiheight, self.buttoncolor, self.hovercolor, self.pressedcolor,
+                              self.inactivecolor, self._dropdownitemchanged))
         return
+
+    def _dropdownitemchanged(self, object):
+        print(object.item)
+        object.keydict[object.key] = object.item
+        self.settings.updatesettingsfile()
