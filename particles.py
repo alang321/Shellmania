@@ -2,40 +2,42 @@ from Vector import Vector2d
 import numpy as np
 
 class particle:
+    _enabled = True
     g = 9.80665
 
     def __init__(self, pos, surface, duration, dir, velocity, slowdown, particles, fadeout=True, fadeoutstart=0.0, wind=None, m=1.0):
-        #entitiy list
-        particles.append(self)
-        self.delete = False
+        if particle._enabled:
+            #entitiy list
+            particles.append(self)
+            self.delete = False
 
-        # pos vel, vel is a vector2d
-        self.pos = pos
-        self.velocity = velocity * dir
+            # pos vel, vel is a vector2d
+            self.pos = pos
+            self.velocity = velocity * dir
 
-        #forces
-        self.wind = wind
-        self.m = m
-        if self.wind != None:
-            self.windeffect = True
-        else:
-            self.windeffect = False
+            #forces
+            self.wind = wind
+            self.m = m
+            if self.wind != None:
+                self.windeffect = True
+            else:
+                self.windeffect = False
 
-        #if particle shouild fade out linearly
-        self.fadeout = fadeout
-        #when the fadeout starts in seconds
-        self.fadeoutstart = fadeoutstart
-        #how long the partile lives
-        self.duration = float(duration)
-        #loose this percentage of velocity each second
-        self.slowdown = slowdown
+            #if particle shouild fade out linearly
+            self.fadeout = fadeout
+            #when the fadeout starts in seconds
+            self.fadeoutstart = fadeoutstart
+            #how long the partile lives
+            self.duration = float(duration)
+            #loose this percentage of velocity each second
+            self.slowdown = slowdown
 
-        #time to lkeep track of how long particle has been alive
-        self.timer = 0.0
+            #time to lkeep track of how long particle has been alive
+            self.timer = 0.0
 
-        #surface
-        self.surface = surface
-        self.rect = self.surface.get_rect()
+            #surface
+            self.surface = surface
+            self.rect = self.surface.get_rect()
 
 #draw the particle
     def draw(self, screen):
@@ -77,43 +79,46 @@ class particle:
 class bouncyparticle:
     g = 9.80665
 
+    _enabled = True
+
     def __init__(self, pos, terrain, surface, duration, dir, velocity, particles, fadeout=True, fadeoutstart=0.0, wind=None, m=1.0, coeffrest=0.6):
-        #entitiy list
-        particles.append(self)
-        self.delete = False
+        if bouncyparticle._enabled:
+            #entitiy list
+            particles.append(self)
+            self.delete = False
 
-        #bouncing
-        self.terrain = terrain
-        self.coeffrest = coeffrest
-        #more efficienct
-        self.atrest = False
-        self.minspeed = 0.1
+            #bouncing
+            self.terrain = terrain
+            self.coeffrest = coeffrest
+            #more efficienct
+            self.atrest = False
+            self.minspeed = 0.1
 
-        # pos vel, vel is a vector2d
-        self.pos = pos
-        self.velocity = velocity * dir
+            # pos vel, vel is a vector2d
+            self.pos = pos
+            self.velocity = velocity * dir
 
-        #forces
-        self.wind = wind
-        self.m = m
-        if self.wind != None:
-            self.windeffect = True
-        else:
-            self.windeffect = False
+            #forces
+            self.wind = wind
+            self.m = m
+            if self.wind != None:
+                self.windeffect = True
+            else:
+                self.windeffect = False
 
-        #if particle shouild fade out linearly
-        self.fadeout = fadeout
-        #when the fadeout starts in seconds
-        self.fadeoutstart = fadeoutstart
-        #how long the partile lives
-        self.duration = float(duration)
+            #if particle shouild fade out linearly
+            self.fadeout = fadeout
+            #when the fadeout starts in seconds
+            self.fadeoutstart = fadeoutstart
+            #how long the partile lives
+            self.duration = float(duration)
 
-        #time to lkeep track of how long particle has been alive
-        self.timer = 0.0
+            #time to lkeep track of how long particle has been alive
+            self.timer = 0.0
 
-        #surface
-        self.surface = surface
-        self.rect = self.surface.get_rect()
+            #surface
+            self.surface = surface
+            self.rect = self.surface.get_rect()
 
 #draw the particle
     def draw(self, screen):

@@ -81,7 +81,9 @@ class bouncybomb:
                         newpos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
 
                         if newpos[1] < self.terrain.heightmap[int(newpos[0])]:
-                            self.pos = newpos
+                            #move the ball  up an extra two steps to get better hroiund clearence, helps since terrain isrugged
+                            vec = opposite * ((i+2) / float(steps)) * 20.0 * dt
+                            self.pos = [self.pos[0] + vec.x, self.pos[1] + vec.y]
                             newposset = True
                             break
 

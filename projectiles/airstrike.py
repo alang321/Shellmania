@@ -69,6 +69,7 @@ class airstrike:
                 if self.terrain.heightmap[int(self.pos[0])] < self.pos[1]:
                     #delete missile
                     self.impacted = True
+                    self.pos[1] = self.terrain.heightmap[int(self.pos[0])]
             else:
                 self.delete = True
         else:
