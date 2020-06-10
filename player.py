@@ -11,7 +11,6 @@ from particles import particle
 from playerinventory import playerinventory
 
 class player:
-    _defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile], [-1, 2, 1, 2], 0)
 
     #this holds the current player if there is one
     _currentplayer = None
@@ -37,6 +36,19 @@ class player:
         self.aliveplayers = aliveplayers
         self.wind = wind
         self.settings = settings
+
+        #default inventory
+        nrmissile = -1 if self.settings.inventory['Infinite missiles'] else self.settings.inventory['Amount missile']
+        nrbouncybomb = -1 if self.settings.inventory['Infinite bouncybombs'] else self.settings.inventory['Amount bouncybomb']
+        nrairstrike = -1 if self.settings.inventory['Infinite airstrikes'] else self.settings.inventory['Amount airstrike']
+        nrteleporter = -1 if self.settings.inventory['Infinite teleporters'] else self.settings.inventory['Amount teleporter']
+        nrnukes = -1 if self.settings.inventory['Infinite nukes'] else self.settings.inventory['Amount nuke']
+
+        self.defaultinventory = playerinventory([missile, bouncybomb, airstrike, teleportermissile, nuke], [nrmissile, nrbouncybomb, nrairstrike, nrteleporter, nrnukes], 0, self)
+
+        #maximum height difference the player can drive over
+        self.maxheightdiff = self.settings.gamevalues['Max height diff']
+
 
         # maximum turrent angle in radians
         self.maxturretangle = self.settings.gamevalues["Max turret angle"] * (np.pi / 180.0)
@@ -100,17 +112,11 @@ class player:
         #text
         self.textsurface = self.font.render(self.name, False, self.color)
 
-        #wether or not palyer has infinite nukes
-        self.infinitenukes = self.settings.gamevalues["Infinite nukes"]
-
         #toggles
         self.drawToggle = True
         self.delete = False
         self.controlActive = False
         self.destroyed = False
-
-        #inventory
-        self.inventory = player._defaultinventory.copy()
         return
 
     def respawn(self, xpos):
@@ -128,10 +134,7 @@ class player:
         self.shotcounter = 0
 
         #inventory
-        self.inventory = player._defaultinventory.copy()
-        self.inventory.owner = self
-        if self.infinitenukes:
-            self.inventory.addtoitemamount(nuke, -1)
+        self.inventory = self.defaultinventory.copy()
 
         #set tank on ground and update turret vector
         self.setonground()
@@ -234,7 +237,7 @@ class player:
             newx = self.pos[0] + dirvector.x * dt * self.speed
 
             #checks if newpos is in bounds and if height difference exceeds maximum
-            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) < 22:
+            if 0 < newx < self.terrain.bounds[0] - 1 and abs(self.terrain.heightmap[int(max(min(self.pos[0]+movedir*5, self.terrain.bounds[0]-1), 0.0))] - self.terrain.heightmap[int(max(min(self.pos[0]+movedir*3, self.terrain.bounds[0]-1), 0.0))]) <= self.maxheightdiff:
                 self.fuel -= dt
                 self.pos[0] = newx
                 self.setonground()

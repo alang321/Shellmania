@@ -5,6 +5,7 @@ from terrain import terrain
 import random
 from wind import windforce
 from ui.button import button
+from projectiles.bouncybomb import bouncybomb
 
 class gamescene:
     _playercolors = [pygame.color.THECOLORS["red"], pygame.color.THECOLORS["yellow"], pygame.color.THECOLORS["cyan"], pygame.color.THECOLORS["pink"], pygame.color.THECOLORS["purple"], pygame.color.THECOLORS["green"]]
@@ -70,6 +71,9 @@ class gamescene:
         self.offsetfromcenter = self.screensize[1]*0.2
         self.boxmargin =self.screensize[1]*0.05
         self.subtextmargin = 0.02 * self.screensize[1]
+
+        #set bouncybomb bounces from settings
+        bouncybomb._maxbounces = self.settings.gamevalues["Bouncybomb bounces"]
 
         #create terrain object
         self.gameTerrain = terrain(self.screensize)

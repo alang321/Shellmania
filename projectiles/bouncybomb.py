@@ -8,6 +8,8 @@ from particles import particle
 class bouncybomb:
     _name = "Bouncebomb"
 
+    _maxbounces = 1
+
     width = 10
     height = 10
 
@@ -21,7 +23,7 @@ class bouncybomb:
         self.velocity = velocity * dir
         self.pos = pos
 
-        self.maxbounces = 1
+        self.maxbounces = bouncybomb._maxbounces
         self.bounces = 0
         self.coeffrest = 0.6
 

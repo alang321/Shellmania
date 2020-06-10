@@ -6,11 +6,12 @@ class settingsscene:
     nextscene = None
 
     #the names of the settings tabs smae length as list is settingsitems
-    tabnames = ["Keys", "Player", "General", "Display"]
+    tabnames = ["General", "Controls", "Player", "Inventory", "Display"]
     #all settingsitems that are created, [dictindex, "text", "key", "type", specific]
-    settingsitems = [[[0, "key", "Move left", "Left"], [0, "key", "Move right", "Right"], [0, "key", "Next item", "Next"], [0, "key", "Previous item", "Previous"], [0, "key", "Fire", "Fire"]],
-                     [[1, "float", "Initial fuel in seconds", "Initial fuel", [0, 999]], [1, "float", "Maximum turret angle", "Max turret angle", [0, 180]], [1, "float", "Player speed", "Player speed", [0, 9999]], [1, "float", "Fullpower shot charging time", "Fullpower shot time", [0, 60]], [1, "float", "Relative shooting power", "Shot power", [0, 100]], [1, "float", "Initial health", "Initial health", [0.1, 999]], [1, "bool", "Infinite nukes (usually +1 per kill)", "Infinite nukes"]],
-                     [[1, "float", "Turn length", "Turn length", [3, 9999]], [1, "int", "Turn shot limit", "Shot limit", [1, 999]], [1, "bool", "Enable fuel", "Enable fuel"], [1, "bool", "Reset fuel every turn", "Reset fuel"], [1, "float", "Maximum wind strength", "Wind strength", [0, 100]]],
+    settingsitems = [[[1, "float", "Turn length", "Turn length", [3, 9999]], [1, "int", "Turn shot limit", "Shot limit", [1, 999]], [1, "bool", "Enable fuel", "Enable fuel"], [1, "bool", "Reset fuel every turn", "Reset fuel"], [1, "float", "Maximum wind strength", "Wind strength", [0, 100]], [1, "int", "Maximum bouncybomb bounces", "Bouncybomb bounces", [0, 999]]],
+                     [[0, "key", "Move left", "Left"], [0, "key", "Move right", "Right"], [0, "key", "Next item", "Next"], [0, "key", "Previous item", "Previous"], [0, "key", "Fire", "Fire"]],
+                     [[1, "float", "Initial fuel in seconds", "Initial fuel", [0, 999]], [1, "float", "Maximum turret angle", "Max turret angle", [0, 180]], [1, "float", "Player speed", "Player speed", [0, 9999]], [1, "float", "Fullpower shot charging time", "Fullpower shot time", [0.01, 60]], [1, "float", "Relative shooting power", "Shot power", [0, 100]], [1, "float", "Initial health", "Initial health", [0.1, 999]], [1, "int", "Maximum height difference movement", "Max height diff", [0, 999]]],
+                     [[2, "int", "Initial amount missiles", "Amount missile", [0, 999]], [2, "bool", "Infinite missiles", "Infinite missiles"], [2, "int", "Initial amount bouncybombs", "Amount bouncybomb", [0, 999]], [2, "bool", "Infinite bouncybombs", "Infinite bouncybombs"], [2, "int", "Initial amount airstrikes", "Amount airstrike", [0, 999]], [2, "bool", "Infinite airstrikes", "Infinite airstrikes"], [2, "int", "Initial amount teleporters", "Amount teleporter", [0, 999]], [2, "bool", "Infinite teleporters", "Infinite teleporters"], [2, "int", "Initial amount nukes", "Amount nuke", [0, 999]], [2, "bool", "Infinite nukes", "Infinite nukes"]],
                      [[1, "bool", "Fullscreen (Restart required)", "Fullscreen"], [1, "dropdown", "Resolution (Restart required)", "Resolution", [[1920, 1080], [1600, 900], [1280, 720], [960, 540]]]]]
 
     def __init__(self, screen, background, settings):
@@ -35,7 +36,7 @@ class settingsscene:
         #buttons
         self.buttons = []
 
-        self.settingspages = settingstabs([self.screensize[0]*0.15, self.screensize[1]*0.2], self.screensize[1]*0.059, self.screensize[0]*0.58, self.font, self.settingsitems, self.tabnames, self.settings)
+        self.settingspages = settingstabs([self.screensize[0]*0.15, self.screensize[1]*0.15], self.uiheight, self.screensize[0]*0.58, self.font, self.settingsitems, self.tabnames, self.settings)
 
 
         #button colors

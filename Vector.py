@@ -6,7 +6,6 @@ class Vector2d:
         self.x = x
         self.y = y
 
-    # create addNumbers static method
     @staticmethod
     def getvectorfrompoints(origin, target):
         return Vector2d(target[0] - origin[0], target[1] - origin[1])
@@ -19,7 +18,7 @@ class Vector2d:
             angle = 2.0 * np.pi + angle
         return angle
 
-    #return new vecto rotated by angle vec over angle in radians
+    #return new vecto rotated by angle in radians
     def getrotatedvect(self, angle):
         c, s = np.cos(angle), np.sin(angle)
         return Vector2d(self.x*c-self.y*s, self.x*s+self.y*c)
@@ -33,7 +32,7 @@ class Vector2d:
     def length(self):
         return (self.x**2 + self.y**2)**0.5
 
-    #skips taking the root, faster for cases where you need the square anyway
+    #skips taking the root, faster for cases where you can use the square anyway
     def lengthsquared(self):
         return self.x**2 + self.y**2
 
