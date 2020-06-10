@@ -134,7 +134,7 @@ class gamescene:
     #game loop function
     def startgameloop(self):
         t0 = 0.001 * pygame.time.get_ticks()
-        maxdt = 0.5
+        maxdt = 0.1
 
         while self.running:
             self.elapsedtime = 0.001 * pygame.time.get_ticks()

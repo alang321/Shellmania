@@ -35,7 +35,7 @@ class missile:
 
         #trail particle
         self.trailcounter = 0
-        self.traillength = 5
+        self.traillength = 7
         self.trailhistory = [None] * self.traillength
         self.trailinterval = 0.001
         self.timesincetrail = self.trailinterval
