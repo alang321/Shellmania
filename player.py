@@ -192,7 +192,7 @@ class player:
                 #body
                 pygame.draw.polygon(self.sprite, self.color, self.body)
                 #rotate body
-                self.rotatedbody = pygame.transform.rotate(self.sprite, np.rad2deg(self.terrain.normalmap[int(self.pos[0])].find360CCWAngle(Vector2d(0.0, -1.0))))
+                self.rotatedbody = pygame.transform.rotate(self.sprite, np.rad2deg(self.terrain.normalmap[int(self.pos[0])].findCCWAngle(Vector2d(0.0, -1.0))))
 
             #draw
             screen.blit(self.rotatedbody, (self.pos[0] - self.rotatedbody.get_width() / 2.0, self.pos[1] - self.rotatedbody.get_height() / 2.0))
@@ -296,7 +296,7 @@ class player:
     #return the vector limited by the maximum angle bounds
     def _limitvecangle(self, target, reference):
 
-        angle = target.find360CCWAngle(reference)
+        angle = target.findCCWAngle(reference)
 
         #if outside of limit return rotated to max angle, else return target vector
         if self.maxturretangle < angle < 2 * np.pi - self.maxturretangle:

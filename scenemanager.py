@@ -4,16 +4,15 @@ from scenes.mainmenuscene import mainmenuscene
 from background import background
 
 class scenemanager:
-    #path for the settings
     def __init__(self, settingspath):
+        # intialize and read/create the settings from the specified file path
         self.settings = gamesettings(settingspath)
 
-        # initialize pygame
+        # initialize needed pygame modules
         pygame.init()
         pygame.font.init()
-        pygame.mixer.init()
 
-        # screen
+        # create screen with values from settings
         if self.settings.gamevalues["Fullscreen"]:
             self.screen = pygame.display.set_mode(self.settings.gamevalues["Resolution"], pygame.FULLSCREEN)
         else:
@@ -27,7 +26,7 @@ class scenemanager:
 
         self.sceneswitcher()
 
-
+    #switch between scenes, open a scene, when the lkopp in the scene runs out it switches to the next scene , erach scne must have a nexctscene argument (didnt know how to properly do inheritance in python)
     def sceneswitcher(self):
         running = True
 

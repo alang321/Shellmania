@@ -6,15 +6,20 @@ import random
 class terrain:
     bedrockheight = 10
 
+    #basically consits of a bool array which says whether or not somwhere is ground or not
+    #for each x location there is aheight level where the ground start and a normal vector which is used for bounces and rotation of the playwer
+    # there can only be one surface layer
+
     def __init__(self, bounds, groundcolor=pygame.color.THECOLORS["green"]):
         self.bounds = bounds
-        self.groundcolor = (193, 68, 14)
+        self.groundcolor = groundcolor
         self.backgroundcolor = pygame.color.THECOLORS["black"][:-1]
 
         #create surface that can later be edited with a reference array terrain bitmap
         self.surface = pygame.Surface(self.bounds)
         self.surface.set_colorkey(self.backgroundcolor)
         self.surface.fill(self.groundcolor) # doesnt work without this on osx for some reason
+        self.surface.convert()
 
         #height for each x pos
         self.heightmap = [None] * self.bounds[0]

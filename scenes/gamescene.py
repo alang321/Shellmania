@@ -16,7 +16,7 @@ class gamescene:
 
     nextscene = None
 
-    def __init__(self, screen, background, settings, playernames):
+    def __init__(self, screen, background, settings, playernames): # Starts a round with the screen, settings and playernames passed
         self.arguments = []
         #settingsfile
         self.settings = settings
