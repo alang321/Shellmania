@@ -5,8 +5,8 @@ class gamesettings:
     _playerkeys = {'Left': pygame.K_a, 'Right': pygame.K_d, 'Next': pygame.K_e, 'Previous': pygame.K_q, 'Fire': pygame.K_SPACE, 'Quit':pygame.K_ESCAPE}
     _gamevalues = {'Resolution':[1280, 720], 'Fullscreen':False, 'Wind strength':3.0, 'Turn length':25.0,'Shot limit':1, 'Enable fuel': True, 'Reset fuel':False, 'Initial fuel':15.0, 'Max turret angle':85.0, 'Player speed':45.0, 'Fullpower shot time':1.1, 'Shot power':1.0, 'Initial health': 1.0, 'Bouncybomb bounces':3, 'Max height diff':22, 'Enable particles':True, 'Enable bouncy particles':True}
     _inventory = {'Amount nuke':0, 'Amount missile':0, 'Amount bouncybomb':2, 'Amount teleporter':2, 'Amount airstrike':1, 'Infinite nukes':False, 'Infinite missiles':True, 'Infinite bouncybombs':False, 'Infinite teleporters':False, 'Infinite airstrikes':False,}
-    _design = {'Button color':[210,206,194,255], 'Button hover color':[242,190,28,255], 'Button pressed color':[255,110,0,255], 'Button inactive color':list(pygame.color.THECOLORS["red"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':[130,130,130], 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Title color':[242,190,28,255], 'Label color':[242,190,28,255], 'Font type':'Calibri', 'Font type title':'Calibri'}
-    _misc = {'Game title': "Placeholder"}
+    _design = {'Button color':[210,206,194,255], 'Button hover color':[242,190,28,255], 'Button pressed color':[255,110,0,255], 'Button inactive color':list(pygame.color.THECOLORS["red"]), 'Textbox active color':list(pygame.color.THECOLORS["white"]), 'Textbox inactive color':[130,130,130], 'Textbox border color':list(pygame.color.THECOLORS["black"]), 'Title color':[242,190,28,255], 'Label color':[242,190,28,255], 'Font type':'Calibri', 'Font type title':'Bauhaus 93'}
+    _misc = {'Game title': "Shellmania"}
 
     _sections = {'playerkeys': 0, 'values': 1, 'inventory':2, 'design':3, 'misc':4}
 

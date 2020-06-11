@@ -27,7 +27,7 @@ class mainmenuscene:
         self.inactivecolor = settings.design["Button inactive color"]
 
         #gamename
-        self.titlefont = pygame.font.SysFont(settings.design["Font type title"], max(int(self.screensize[1]*0.2), 30))
+        self.titlefont = pygame.font.SysFont(settings.design["Font type title"], max(int(self.screensize[1]*0.25), 30))
         self.titletext = self.titlefont.render(settings.misc["Game title"], True, settings.design["Title color"])
         self.titlepos = [self.screensize[0]/2-self.titletext.get_rect().w/2, self.screensize[1]*0.285-self.titletext.get_rect().h/2]
 

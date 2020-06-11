@@ -1,4 +1,4 @@
-from placeholder import placeholder
+from scenemanager import scenemanager
 
 # Left right with a and d
 # switch item q and e
@@ -8,4 +8,4 @@ from placeholder import placeholder
 
 # get a nuke by getting a kill (or switch to infinite in settings)
 
-placeholder("./settings.txt")
+scenemanager("./settings.txt")

@@ -3,7 +3,7 @@ from settings import gamesettings
 from scenes.mainmenuscene import mainmenuscene
 from background import background
 
-class placeholder:
+class scenemanager:
     #path for the settings
     def __init__(self, settingspath):
         self.settings = gamesettings(settingspath)
