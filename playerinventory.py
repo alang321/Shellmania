@@ -133,7 +133,7 @@ class playerinventory:
 
     #returns a copy of the inventory
     def copy(self):
-        return playerinventory(self.items.copy(), self.amounts.copy(), self.default)
+        return playerinventory(self.items.copy(), self.amounts.copy(), self.default, self.owner)
 
     # pickup particle, text that gets displayed above the player
     def pickupparticle(self, item, amount):
